@@ -1,16 +1,32 @@
-# React + Vite
+# PigeonCop
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+PigeonCop is a web-based bird deterrent system built using React and Vite.
 
-Currently, two official plugins are available:
+The project uses a live camera feed to monitor an area and is being developed to detect pigeons and other birds automatically. When a bird is detected, the system will play deterrent sounds and maintain detection logs.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Current Features
 
-## React Compiler
+* Live camera feed using the browser Camera API
+* Camera permission handling
+* Loading and error status cards
+* Retry option for camera access issues
+* Responsive React component structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+* React
+* Vite
+* Bootstrap
+* JavaScript
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Planned Features
+
+* Start/Stop monitoring
+* Detection logs
+* Audio deterrent system
+* Bird detection using AI/Computer Vision
+* Detection statistics dashboard
+
+## Status
+
+This project is currently under development.
