@@ -12,10 +12,10 @@ function Camera() {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: true
             })
-
+            setStatus("active");
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
-                setStatus("active");
+
             }
         }
         catch (error) {
@@ -30,6 +30,7 @@ function Camera() {
 
     return (
         <div>
+            <h3>Status : {status}</h3>
             {status === "loading" && (
                 <StatusCard
                     title="Loading"
@@ -41,8 +42,6 @@ function Camera() {
                 <StatusCard
                     title="Error"
                     message="Camera access denied.Please enable camera access from your browser settings and refresh the page."
-                    buttonText="Try Again"
-            onRetry={startCamera}
                 />
             )}
 
@@ -50,7 +49,10 @@ function Camera() {
                 ref={videoRef}
                 autoPlay
                 playsInline
+                className="d-block mx-auto mt-3 border-dark rounded"
                 style={{
+                    maxWidth: "700px",
+                    width: "100%",
                     display: status === "active" ? "block" : "none"
                 }}
             />
