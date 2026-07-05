@@ -5,15 +5,17 @@ import DetectionLog from './components/DetectionLog'
 import Footer from './components/Footer'
 import StatusPanel from './components/StatusPanel'
 import './App.css'
-
+import { useState } from "react";
 
 function App() {
+  const [status, setStatus] = useState("offline");
+
   return (
     <>
       <Header />
-      <Camera />
+      <Camera status={status} setStatus={setStatus} />
       <br />
-      <ControlPanel />
+      <ControlPanel status={status} setStatus={setStatus} />
       <div className="dashboard-grid">
         <DetectionLog />
         <StatusPanel />

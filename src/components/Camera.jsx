@@ -1,22 +1,21 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import StatusCard from "./StatusCard";
 
-function Camera() {
-    const [status, setStatus] = useState("loading");
+function Camera({ status, setStatus }) {
     const videoRef = useRef(null);
-
 
     async function startCamera() {
         try {
-            setStatus("loading")
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: true
-            })
-            setStatus("active");
+            });
+
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
-
+                await videoRef.current.play();
             }
+
+            setStatus("active");
         }
         catch (error) {
             console.error(error);
@@ -25,8 +24,10 @@ function Camera() {
     }
 
     useEffect(() => {
-        startCamera();
-    }, [])
+        if (status === "loading") {
+            startCamera();
+        }
+    }, [status]);
 
     return (
         <div>
@@ -40,46 +41,45 @@ function Camera() {
             {status === "error" && (
                 <StatusCard
                     title="🔴 Camera Error"
-                    message="Camera access denied.Please enable camera access from your browser settings and refresh the page."
+                    message="Camera access denied. Please enable camera access from your browser settings and refresh the page."
                 />
             )}
 
-            {status === "active" && (
+            <div
+                className="card shadow-lg p-3 section-spacing"
+                style={{
+                    display: status === "offline" || status === "error"
+                        ? "none"
+                        : "block"
+                }}
+            >
+                <div className="camera-header">
+                    <h5 className="camera-title">Live Camera Feed</h5>
 
-                <>
+                    <div className="camera-line"></div>
 
-                    <div className="card shadow-lg p-3 section-spacing">
-                        <h5 className="card-title mb-4 section-title">
-                            <div className="camera-header">
-                                <h5 className="camera-title">Live Camera Feed</h5>
+                    {status === "active" && (
+                        <div className="monitoring-status">
+                            🟢 MONITORING ACTIVE
+                        </div>
+                    )}
+                </div>
 
-                                <div className="camera-line"></div>
-
-                                <div className="monitoring-status">
-                                    🟢 MONITORING ACTIVE
-                                </div>
-                            </div>
-                        </h5>
-
-                        <video
-                            ref={videoRef}
-                            autoPlay
-                            playsInline
-                            className="d-block mx-auto videoEl"
-                            style={{
-                                width: "100%",
-                                maxWidth: "900px",
-                                maxHeight: "55vh",
-                                aspectRatio: "16 / 9",
-                                objectFit: "cover"
-                            }}
-                        />
-                    </div>
-                </>
-
-
-            )}
-
+                <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    className="d-block mx-auto videoEl"
+                    style={{
+                        width: "100%",
+                        maxWidth: "900px",
+                        maxHeight: "55vh",
+                        aspectRatio: "16 / 9",
+                        objectFit: "cover",
+                        display: status === "active" ? "block" : "none"
+                    }}
+                />
+            </div>
         </div>
     );
 }
