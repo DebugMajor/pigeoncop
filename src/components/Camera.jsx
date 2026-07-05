@@ -30,35 +30,58 @@ function Camera() {
 
     return (
         <div>
-            <h3>Status : {status}</h3>
             {status === "loading" && (
                 <StatusCard
-                    title="Loading"
+                    title="🟡 Waiting for permission"
                     message="Waiting for user permission"
                 />
             )}
 
             {status === "error" && (
                 <StatusCard
-                    title="Error"
+                    title="🔴 Camera Error"
                     message="Camera access denied.Please enable camera access from your browser settings and refresh the page."
                 />
             )}
 
-            <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                className="d-block mx-auto mt-3 border-dark rounded"
-                style={{
-                    maxWidth: "700px",
-                    width: "100%",
-                    display: status === "active" ? "block" : "none"
-                }}
-            />
+            {status === "active" && (
+
+                <>
+
+                    <div className="card shadow-lg p-3 section-spacing">
+                        <h5 className="card-title mb-4 section-title">
+                            <div className="camera-header">
+                                <h5 className="camera-title">Live Camera Feed</h5>
+
+                                <div className="camera-line"></div>
+
+                                <div className="monitoring-status">
+                                    🟢 MONITORING ACTIVE
+                                </div>
+                            </div>
+                        </h5>
+
+                        <video
+                            ref={videoRef}
+                            autoPlay
+                            playsInline
+                            className="d-block mx-auto videoEl"
+                            style={{
+                                width: "100%",
+                                maxWidth: "900px",
+                                maxHeight: "55vh",
+                                aspectRatio: "16 / 9",
+                                objectFit: "cover"
+                            }}
+                        />
+                    </div>
+                </>
+
+
+            )}
+
         </div>
     );
 }
-
 
 export default Camera;

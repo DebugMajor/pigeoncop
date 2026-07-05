@@ -1,8 +1,19 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {
+    faShield
+} from "@fortawesome/free-solid-svg-icons"
+
 function Header() {
     return (
-        <div>
-            <h1>Pigeon Cop</h1>
-            <p>A react based bird repellent which uses the real time camera based detection and ai models to play sounds </p>
+        <div className="mb-5">
+            <h1 className="display-2 fw-bold hero-title">
+                PigeonCop <FontAwesomeIcon icon={faShield} />
+            </h1> 
+
+            <p className="page-subtitle">
+                AI powered bird monitoring and deterrence system
+                using computer vision and automated response mechanisms.
+            </p>
         </div>
     )
 }
