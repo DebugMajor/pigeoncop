@@ -11,8 +11,8 @@ function ControlPanel({ status, setStatus }) {
                 <div className="card-body">
                     <h5 className="card-title">Controls</h5>
                     <button disabled={status === "active" || status === "loading"} type="button" className="btn btn-success mx-3 rounded-pill mt-3 mb-3 shadow px-4 py-2" onClick={() => setStatus("loading")}> <FontAwesomeIcon icon={faPlay} /> Start Monitoring </button>
-                    <button type="button" className="btn btn-danger mx-3 rounded-pill mt-3 mb-3 shadow px-4 py-2" > <FontAwesomeIcon icon={faStop} />  Stop Monitoring</button>
-                    <button disabled={status === "error" || status === "offline"} type="button" className="btn btn-warning mx-3 rounded-pill mt-3 mb-3 shadow px-4 py-2" onClick={() => setStatus("offline")} > <FontAwesomeIcon icon={faMusic} /> Test Sound</button>
+                    <button disabled={status === "error" || status === "offline"} type="button" className="btn btn-danger mx-3 rounded-pill mt-3 mb-3 shadow px-4 py-2" onClick={() => setStatus("stopping")}> <FontAwesomeIcon icon={faStop} />  Stop Monitoring</button>
+                    <button type="button" className="btn btn-warning mx-3 rounded-pill mt-3 mb-3 shadow px-4 py-2" > <FontAwesomeIcon icon={faMusic} /> Test Sound</button>
 
                 </div>
             </div>

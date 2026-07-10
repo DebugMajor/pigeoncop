@@ -3,12 +3,13 @@ import StatusCard from "./StatusCard";
 
 function Camera({ status, setStatus }) {
     const videoRef = useRef(null);
-
+    const streamRef = useRef(null);
     async function startCamera() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: true
             });
+            streamRef.current = stream;
 
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
@@ -27,8 +28,26 @@ function Camera({ status, setStatus }) {
         if (status === "loading") {
             startCamera();
         }
+        else if (status === "stopping")
+            stopCamera();
     }, [status]);
 
+    function stopCamera() {
+        //stop tracks
+        if (streamRef.current != null) {
+            const tracks = streamRef.current.getTracks();
+            tracks.forEach((track) => {
+                track.stop();
+            })
+            streamRef.current = null;
+            //detach stream from video and cleanup video element
+            if (videoRef.current.srcObject != null)
+                videoRef.current.srcObject = null;
+            //Update UI   
+            setStatus("offline");
+        }
+    }
+    
     return (
         <div>
             {status === "loading" && (
