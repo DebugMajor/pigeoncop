@@ -4,6 +4,8 @@ import StatusCard from "./StatusCard";
 function Camera({ status, setStatus }) {
     const videoRef = useRef(null);
     const streamRef = useRef(null);
+    const canvasRef = useRef(null);
+
     async function startCamera() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
@@ -47,7 +49,23 @@ function Camera({ status, setStatus }) {
             setStatus("offline");
         }
     }
-    
+
+    function captureFrame() {
+        const canvasObj = canvasRef.current;
+        const context = canvasObj.getContext("2d");
+
+        console.log("Frame Captured")
+        canvasObj.width = videoRef.current.videoWidth
+        canvasObj.height = videoRef.current.videoHeight
+        context.drawImage(
+            videoRef.current,
+            0, 0,
+            canvasObj.width,
+            canvasObj.height
+
+        )
+    }
+
     return (
         <div>
             {status === "loading" && (
@@ -98,6 +116,15 @@ function Camera({ status, setStatus }) {
                         display: status === "active" ? "block" : "none"
                     }}
                 />
+                <canvas
+                    ref={canvasRef}
+                    style={{
+                        border: "2px solid red"
+                    }}
+                /> <br />
+                <button onClick={captureFrame}>
+                    Capture Frame
+                </button>
             </div>
         </div>
     );
