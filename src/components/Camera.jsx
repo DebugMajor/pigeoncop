@@ -5,6 +5,7 @@ function Camera({ status, setStatus }) {
     const videoRef = useRef(null);
     const streamRef = useRef(null);
     const canvasRef = useRef(null);
+    const intervalRef = useRef(null);
 
     async function startCamera() {
         try {
@@ -30,8 +31,15 @@ function Camera({ status, setStatus }) {
         if (status === "loading") {
             startCamera();
         }
-        else if (status === "stopping")
+        else if (status === "active") {
+            //start automatic capturing
+            if (intervalRef.current == null)
+                intervalRef.current = setInterval(captureFrame, 100);
+        }
+        else if (status === "stopping") {
             stopCamera();
+        }
+
     }, [status]);
 
     function stopCamera() {
@@ -47,25 +55,38 @@ function Camera({ status, setStatus }) {
                 videoRef.current.srcObject = null;
             //Update UI   
             setStatus("offline");
+            //Stop automatic canvas capturing
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
         }
     }
 
     function captureFrame() {
         const canvasObj = canvasRef.current;
+        const video = videoRef.current;
+
+        // Guard clause
+        if (!canvasObj || !video) {
+            return;
+        }
+
         const context = canvasObj.getContext("2d");
 
-        console.log("Frame Captured")
-        canvasObj.width = videoRef.current.videoWidth
-        canvasObj.height = videoRef.current.videoHeight
+        console.log("Frame Captured");
+
+        // Match canvas size to the video
+        canvasObj.width = video.videoWidth;
+        canvasObj.height = video.videoHeight;
+
+        // Copy current video frame onto the canvas
         context.drawImage(
-            videoRef.current,
-            0, 0,
+            video,
+            0,
+            0,
             canvasObj.width,
             canvasObj.height
-
-        )
+        );
     }
-
     return (
         <div>
             {status === "loading" && (
@@ -122,9 +143,7 @@ function Camera({ status, setStatus }) {
                         border: "2px solid red"
                     }}
                 /> <br />
-                <button onClick={captureFrame}>
-                    Capture Frame
-                </button>
+
             </div>
         </div>
     );

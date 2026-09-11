@@ -5,10 +5,15 @@ import {
 
 function Header() {
     return (
+
         <div className="mb-5">
             <h1 className="display-2 fw-bold hero-title">
-                PigeonCop <FontAwesomeIcon icon={faShield} />
-            </h1> 
+                <img
+                    src="/logo-wordmark.png"
+                    alt="PigeonCop"
+                    className="pigeoncop-logo"
+                />
+            </h1>
 
             <p className="page-subtitle">
                 AI powered bird monitoring and deterrence system

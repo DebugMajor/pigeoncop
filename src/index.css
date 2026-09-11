@@ -16,3 +16,14 @@ body {
   padding: 30px;
   text-align: center;
 }
+
+.pigeoncop-logo {
+    width: 260px;
+    max-width: 90%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+.hero-title {
+    margin-bottom: 12px;
+}
