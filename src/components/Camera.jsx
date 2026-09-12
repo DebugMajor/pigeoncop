@@ -8,6 +8,9 @@ function Camera({ status, setStatus, onDetection }) {
     const intervalRef = useRef(null);
     const prevFrameRef = useRef(null);
     const lastDetectionTimeRef = useRef(null);
+    const consecutiveMotionFrames = useRef(0);
+    const armed = useRef(true);
+    const consecutiveNoMotionFrames = useRef(0);
 
     async function startCamera() {
         try {
@@ -36,7 +39,7 @@ function Camera({ status, setStatus, onDetection }) {
         else if (status === "active") {
             //start automatic capturing
             if (intervalRef.current == null)
-                intervalRef.current = setInterval(captureFrame, 2000);
+                intervalRef.current = setInterval(captureFrame, 500);
         }
         else if (status === "stopping") {
             stopCamera();
@@ -105,6 +108,7 @@ function Camera({ status, setStatus, onDetection }) {
         const prevPixels = prevFrameRef.current.data;
         const currPixels = currentFrame.data;
 
+        const frameThreshold = 2;
         const totalPixels = currPixels.length / 4;
         const pixelThreshold = 30;
         let changedPixels = 0;
@@ -123,21 +127,48 @@ function Camera({ status, setStatus, onDetection }) {
         const motionThreshold = 10;
         console.log(motionPercentage + "%");
         console.log(motionThreshold);
-
         if (motionPercentage > motionThreshold) {
-            //Motion Detected
+            // Motion detected
+            consecutiveMotionFrames.current += 1;
+
+            // Reset no-motion counter because motion is present
+            consecutiveNoMotionFrames.current = 0;
+
             const currentTime = Date.now();
-            if (lastDetectionTimeRef.current === null || currentTime - lastDetectionTimeRef.current > 5000) {
-                lastDetectionTimeRef.current = currentTime;
-                const detection = {
-                    id: crypto.randomUUID(),
-                    timestamp: currentTime,
-                    motionPercentage: motionPercentage
+
+            if (consecutiveMotionFrames.current >= frameThreshold) {
+                if (
+                    lastDetectionTimeRef.current === null ||
+                    currentTime - lastDetectionTimeRef.current > 5000
+                ) {
+                    if (armed.current === true) {
+                        lastDetectionTimeRef.current = currentTime;
+
+                        const detection = {
+                            id: crypto.randomUUID(),
+                            timestamp: currentTime,
+                            motionPercentage: motionPercentage
+                        };
+
+                        onDetection(detection);
+
+                        consecutiveMotionFrames.current = 0;
+                        armed.current = false;
+                    }
                 }
-                onDetection(detection);
             }
+        }
+        else {
+            // No motion detected
+            consecutiveMotionFrames.current = 0;
+            consecutiveNoMotionFrames.current += 1;
 
+            // Re-arm only after 3 consecutive no-motion frames
+            const requiredNoMotionFrames = 3;
 
+            if (consecutiveNoMotionFrames.current >= requiredNoMotionFrames) {
+                armed.current = true;
+            }
         }
     }
 
