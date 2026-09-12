@@ -1,5 +1,6 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import StatusCard from "./StatusCard";
+import AIModel from "./AIModel";
 
 function Camera({ status, setStatus, onDetection }) {
     const videoRef = useRef(null);
@@ -11,6 +12,8 @@ function Camera({ status, setStatus, onDetection }) {
     const consecutiveMotionFrames = useRef(0);
     const armed = useRef(true);
     const consecutiveNoMotionFrames = useRef(0);
+    const [videoReady, setVideoReady] = useState(false);
+
 
     async function startCamera() {
         try {
@@ -63,6 +66,7 @@ function Camera({ status, setStatus, onDetection }) {
             //Stop automatic canvas capturing
             clearInterval(intervalRef.current);
             intervalRef.current = null;
+            setVideoReady(false);
         }
     }
 
@@ -77,7 +81,7 @@ function Camera({ status, setStatus, onDetection }) {
 
         const context = canvasObj.getContext("2d");
 
-        console.log("Frame Captured");
+        // console.log("Frame Captured");
 
         // Match canvas size to the video
         canvasObj.width = video.videoWidth;
@@ -125,8 +129,8 @@ function Camera({ status, setStatus, onDetection }) {
         const motionPercentage = (changedPixels / totalPixels) * 100;
         prevFrameRef.current = currentFrame;
         const motionThreshold = 10;
-        console.log(motionPercentage + "%");
-        console.log(motionThreshold);
+        // console.log(motionPercentage + "%");
+        // console.log(motionThreshold);
         if (motionPercentage > motionThreshold) {
             // Motion detected
             consecutiveMotionFrames.current += 1;
@@ -208,7 +212,7 @@ function Camera({ status, setStatus, onDetection }) {
                     )}
                 </div>
 
-                <video
+                <video onLoadedMetadata={() => setVideoReady(true)}
                     ref={videoRef}
                     autoPlay
                     playsInline
@@ -222,6 +226,7 @@ function Camera({ status, setStatus, onDetection }) {
                         display: status === "active" ? "block" : "none"
                     }}
                 />
+                <AIModel videoRef={videoRef} videoReady={videoReady} />
                 <canvas
                     ref={canvasRef}
                     style={{

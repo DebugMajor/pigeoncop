@@ -6,7 +6,7 @@ import Footer from './components/Footer'
 import StatusPanel from './components/StatusPanel'
 import './App.css'
 import { useState } from "react";
-
+import AIModel from "./components/AIModel";
 
 
 
@@ -32,6 +32,7 @@ function App() {
         <StatusPanel />
       </div>
       <Footer />
+      <AIModel />
     </>
   )
 }
