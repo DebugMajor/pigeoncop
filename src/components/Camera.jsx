@@ -1,11 +1,13 @@
 import { useRef, useEffect } from "react";
 import StatusCard from "./StatusCard";
 
-function Camera({ status, setStatus }) {
+function Camera({ status, setStatus, onDetection }) {
     const videoRef = useRef(null);
     const streamRef = useRef(null);
     const canvasRef = useRef(null);
     const intervalRef = useRef(null);
+    const prevFrameRef = useRef(null);
+    const lastDetectionTimeRef = useRef(null);
 
     async function startCamera() {
         try {
@@ -34,7 +36,7 @@ function Camera({ status, setStatus }) {
         else if (status === "active") {
             //start automatic capturing
             if (intervalRef.current == null)
-                intervalRef.current = setInterval(captureFrame, 100);
+                intervalRef.current = setInterval(captureFrame, 2000);
         }
         else if (status === "stopping") {
             stopCamera();
@@ -86,7 +88,59 @@ function Camera({ status, setStatus }) {
             canvasObj.width,
             canvasObj.height
         );
+
+        //Frame Diffrence Motion Detecton
+
+        const currentFrame = context.getImageData(
+            0,
+            0,
+            canvasObj.width,
+            canvasObj.height
+        );
+
+        if (prevFrameRef.current === null) {
+            prevFrameRef.current = currentFrame;
+            return;
+        };
+        const prevPixels = prevFrameRef.current.data;
+        const currPixels = currentFrame.data;
+
+        const totalPixels = currPixels.length / 4;
+        const pixelThreshold = 30;
+        let changedPixels = 0;
+        for (let i = 0; i < currPixels.length; i += 4) {
+            const red = Math.abs(currPixels[i] - prevPixels[i]);
+            const green = Math.abs(currPixels[i + 1] - prevPixels[i + 1]);
+            const blue = Math.abs(currPixels[i + 2] - prevPixels[i + 2]);
+            const currPixelDiff = red + green + blue;
+
+            if (currPixelDiff > pixelThreshold) {
+                changedPixels++;
+            }
+        }
+        const motionPercentage = (changedPixels / totalPixels) * 100;
+        prevFrameRef.current = currentFrame;
+        const motionThreshold = 10;
+        console.log(motionPercentage + "%");
+        console.log(motionThreshold);
+
+        if (motionPercentage > motionThreshold) {
+            //Motion Detected
+            const currentTime = Date.now();
+            if (lastDetectionTimeRef.current === null || currentTime - lastDetectionTimeRef.current > 5000) {
+                lastDetectionTimeRef.current = currentTime;
+                const detection = {
+                    id: crypto.randomUUID(),
+                    timestamp: currentTime,
+                    motionPercentage: motionPercentage
+                }
+                onDetection(detection);
+            }
+
+
+        }
     }
+
     return (
         <div>
             {status === "loading" && (
