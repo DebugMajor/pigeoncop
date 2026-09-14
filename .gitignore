@@ -22,3 +22,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# ML datasets and training artifacts
+datasets/
+runs/
+yolo26n.pt
+
+# Local dataset inspection scripts
+analyze_dataset.py
+inspect_training_data.py
+inspect_v2_boxes.py
+inspect_v2_source.py
+
+# Generated inspection images
+training-data-contact-sheet.jpg
+v2-box-contact-sheet.jpg
+v2-source-contact-sheet.jpg
+

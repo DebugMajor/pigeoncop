@@ -1,24 +1,25 @@
 import { YOLO } from "@ultralytics/yolo";
-import { useEffect, useState } from "react";
-
+import { useEffect, useState, useRef } from "react";
 
 function AIModel({ videoRef, videoReady }) {
     const [model, setModel] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const isProcessing = useRef(false);
+
     useEffect(() => {
         async function loadModel() {
             try {
-                const loadedModel = await YOLO.load("/models/yolo26n.onnx");
+                const loadedModel = await YOLO.load("/models/pigeon-v2.onnx");
 
                 setModel(loadedModel);
                 setLoading(false);
 
-                console.log("YOLO model loaded!");
+                console.log("YOLO pigeon model loaded!");
                 console.log("Device:", loadedModel.device);
-            }
-            catch (error) {
-                console.error("Failed to load YOLO model:", error);
+            } catch (error) {
+                console.error("Failed to load pigeon model:", error);
                 setError(error.message);
                 setLoading(false);
             }
@@ -27,23 +28,66 @@ function AIModel({ videoRef, videoReady }) {
         loadModel();
     }, []);
 
+    const confidenceThreshold = 0.5;
+
     useEffect(() => {
-        if (!model || !videoReady || !videoRef?.current)
+        if (!model || !videoReady || !videoRef?.current) {
             return;
-        async function detect() {
-            const res = await model.predict(videoRef.current);
-            console.log("Detections:", res.boxes.length);
-
-            res.boxes.forEach((box) => {
-                console.log(
-                    "Class:", box.name,
-                    "Confidence:", box.conf,
-                    "Box:", box.x1, box.y1, box.x2, box.y2
-                );
-            });
-
         }
+
+        async function detect() {
+            if (isProcessing.current) {
+                return;
+            }
+
+            try {
+                isProcessing.current = true;
+
+                const res = await model.predict(videoRef.current);
+
+                console.log("Detections:", res.boxes.length);
+
+                res.boxes.forEach((box) => {
+                    if (box.conf >= confidenceThreshold) {
+                        console.log(
+                            "Accepted:",
+                            box.name,
+                            "|",
+                            box.conf,
+                            "Box:",
+                            box.x1,
+                            box.y1,
+                            box.x2,
+                            box.y2
+                        );
+                    } else {
+                        console.log(
+                            "Rejected:",
+                            box.name,
+                            "|",
+                            box.conf,
+                            "Box:",
+                            box.x1,
+                            box.y1,
+                            box.x2,
+                            box.y2
+                        );
+                    }
+                });
+            } finally {
+                isProcessing.current = false;
+            }
+        }
+
         detect();
+
+        const interval = setInterval(() => {
+            detect();
+        }, 1000);
+
+        return () => {
+            clearInterval(interval);
+        };
     }, [model, videoReady, videoRef]);
 
     if (loading) {

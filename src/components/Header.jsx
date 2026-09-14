@@ -1,26 +1,30 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import {
-    faShield
-} from "@fortawesome/free-solid-svg-icons"
-
-function Header() {
+function Header({ status }) {
     return (
+        <header className="topbar">
+            <div className="topbar-inner">
+                <a className="brand" href="/" aria-label="PigeonCop home">
+                    <img
+                        src="/logo-wordmark.png"
+                        alt="PigeonCop"
+                        className="brand-logo"
+                    />
+                </a>
 
-        <div className="mb-5">
-            <h1 className="display-2 fw-bold hero-title">
-                <img
-                    src="/logo-wordmark.png"
-                    alt="PigeonCop"
-                    className="pigeoncop-logo"
-                />
-            </h1>
+                <div className="brand-context">
+                    <span>EDGE AI</span>
+                    <i />
+                    <span>LOCAL INFERENCE</span>
+                    <i />
+                    <span>REAL-TIME</span>
+                </div>
 
-            <p className="page-subtitle">
-                AI powered bird monitoring and deterrence system
-                using computer vision and automated response mechanisms.
-            </p>
-        </div>
-    )
+                <div className="topbar-status">
+                    <span className={`session-dot ${status === "active" ? "is-live" : ""}`} />
+                    <span>{status === "active" ? "SYSTEM ACTIVE" : "SYSTEM READY"}</span>
+                </div>
+            </div>
+        </header>
+    );
 }
 
 export default Header;

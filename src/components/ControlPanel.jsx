@@ -1,25 +1,50 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faPlay,
     faStop,
-    faMusic
-} from "@fortawesome/free-solid-svg-icons"
+    faVolumeHigh,
+} from "@fortawesome/free-solid-svg-icons";
+
 function ControlPanel({ status, setStatus }) {
     return (
-        <div>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">Controls</h5>
-                    <button disabled={status === "active" || status === "loading"} type="button" className="btn btn-success mx-3 rounded-pill mt-3 mb-3 shadow px-4 py-2" onClick={() => setStatus("loading")}> <FontAwesomeIcon icon={faPlay} /> Start Monitoring </button>
-                    <button disabled={status === "error" || status === "offline"} type="button" className="btn btn-danger mx-3 rounded-pill mt-3 mb-3 shadow px-4 py-2" onClick={() => setStatus("stopping")}> <FontAwesomeIcon icon={faStop} />  Stop Monitoring</button>
-                    <button type="button" className="btn btn-warning mx-3 rounded-pill mt-3 mb-3 shadow px-4 py-2" > <FontAwesomeIcon icon={faMusic} /> Test Sound</button>
-
-                </div>
+        <section className="control-panel">
+            <div className="control-copy">
+                <span className="section-kicker">CONTROL</span>
+                <h2>Monitoring Controls</h2>
+                <p>Manage the live camera session and deterrent test.</p>
             </div>
-        </div>
 
+            <div className="control-actions">
+                <button
+                    type="button"
+                    className="action-button action-primary"
+                    disabled={status === "active" || status === "loading"}
+                    onClick={() => setStatus("loading")}
+                >
+                    <FontAwesomeIcon icon={faPlay} />
+                    <span>Start Monitoring</span>
+                </button>
 
-    )
+                <button
+                    type="button"
+                    className="action-button action-secondary"
+                    disabled={status === "offline" || status === "error"}
+                    onClick={() => setStatus("stopping")}
+                >
+                    <FontAwesomeIcon icon={faStop} />
+                    <span>Stop</span>
+                </button>
+
+                <button
+                    type="button"
+                    className="action-button action-tertiary"
+                >
+                    <FontAwesomeIcon icon={faVolumeHigh} />
+                    <span>Test Sound</span>
+                </button>
+            </div>
+        </section>
+    );
 }
 
 export default ControlPanel;
