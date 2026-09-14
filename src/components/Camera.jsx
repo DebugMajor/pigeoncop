@@ -14,6 +14,11 @@ function Camera({ status, setStatus, onDetection }) {
     const consecutiveNoMotionFrames = useRef(0);
     const [videoReady, setVideoReady] = useState(false);
     const [motionDetected, setMotionDetected] = useState(false);
+    const motionSoundRef = useRef(null);
+
+    useEffect(() => {
+        motionSoundRef.current = new Audio("/sounds/motion-feedback-soothing-rock.wav");
+    }, [])
 
     async function startCamera() {
         try {
@@ -157,6 +162,11 @@ function Camera({ status, setStatus, onDetection }) {
                         };
 
                         onDetection(detection);
+
+                        motionSoundRef.current.currentTime = 0
+                        motionSoundRef.current.play().catch((error) => {
+                            console.log("Motion sound playback failed:", error);
+                        });
 
                         consecutiveMotionFrames.current = 0;
                         armed.current = false;

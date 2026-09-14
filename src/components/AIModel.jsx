@@ -6,6 +6,7 @@ function AIModel({ videoRef, videoReady, motionDetected, onDetection }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const aiPredictions = useRef(0);
     const isProcessing = useRef(false);
 
     useEffect(() => {
@@ -41,6 +42,7 @@ function AIModel({ videoRef, videoReady, motionDetected, onDetection }) {
             }
 
             if (!motionDetected) {
+                aiPredictions.current = 0;
                 return;
             }
 
@@ -86,17 +88,34 @@ function AIModel({ videoRef, videoReady, motionDetected, onDetection }) {
                 });
 
                 if (acceptedDetection !== null) {
-                    onDetection({
-                        type: "bird",
-                        id: crypto.randomUUID(),
-                        timestamp: Date.now(),
-                        confidence: acceptedDetection.conf,
-                        name: acceptedDetection.name,
-                        x1: acceptedDetection.x1,
-                        y1: acceptedDetection.y1,
-                        x2: acceptedDetection.x2,
-                        y2: acceptedDetection.y2
-                    });
+                    aiPredictions.current += 1;
+
+                    console.log(
+                        "AI Confirmation:",
+                        `${aiPredictions.current} / 3`
+                    );
+
+                    if (aiPredictions.current >= 3) {
+                        onDetection({
+                            type: "bird",
+                            id: crypto.randomUUID(),
+                            timestamp: Date.now(),
+                            confidence: acceptedDetection.conf,
+                            name: acceptedDetection.name,
+                            x1: acceptedDetection.x1,
+                            y1: acceptedDetection.y1,
+                            x2: acceptedDetection.x2,
+                            y2: acceptedDetection.y2
+                        });
+
+                        console.log("Bird confirmed!");
+
+                        aiPredictions.current = 0;
+                    }
+                } else {
+                    aiPredictions.current = 0;
+
+                    console.log("AI Confirmation: 0 / 3");
                 }
             } finally {
                 isProcessing.current = false;
