@@ -4,32 +4,61 @@ function DetectionLog({ detections }) {
             {detections.length === 0 ? (
                 <div className="empty-state">
                     <div className="empty-state-mark">+</div>
+
                     <div>
                         <h3>No detection events</h3>
-                        <p>Confirmed monitoring events will appear here.</p>
+                        <p>Monitoring activity will appear here.</p>
                     </div>
                 </div>
             ) : (
                 <div className="log-list">
-                    {detections.map((detection) => (
-                        <article className="log-row" key={detection.id}>
-                            <span className="log-dot" />
+                    {detections.map((detection) => {
+                        const isBird = detection.type === "bird";
 
-                            <div className="log-main">
-                                <strong>{detection.label || "Motion Event"}</strong>
-                                <span>{new Date(detection.timestamp).toLocaleTimeString()}</span>
-                            </div>
+                        return (
+                            <article className="log-row" key={detection.id}>
+                                <span className="log-dot" />
 
-                            <div className="log-detail">
-                                <span>Motion</span>
-                                <strong>
-                                    {typeof detection.motionPercentage === "number"
-                                        ? `${detection.motionPercentage.toFixed(1)}%`
-                                        : "—"}
-                                </strong>
-                            </div>
-                        </article>
-                    ))}
+                                <div className="log-main">
+                                    <strong>
+                                        {isBird
+                                            ? "Bird Detected"
+                                            : "Motion Detected"}
+                                    </strong>
+
+                                    <span>
+                                        {new Date(
+                                            detection.timestamp
+                                        ).toLocaleTimeString()}
+                                    </span>
+                                </div>
+
+                                <div className="log-detail">
+                                    {isBird ? (
+                                        <>
+                                            <span>{detection.name || "Pigeon"}</span>
+
+                                            <strong>
+                                                {typeof detection.confidence === "number"
+                                                    ? `${(detection.confidence * 100).toFixed(0)}%`
+                                                    : "—"}
+                                            </strong>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span>Motion</span>
+
+                                            <strong>
+                                                {typeof detection.motionPercentage === "number"
+                                                    ? `${detection.motionPercentage.toFixed(1)}%`
+                                                    : "—"}
+                                            </strong>
+                                        </>
+                                    )}
+                                </div>
+                            </article>
+                        );
+                    })}
                 </div>
             )}
         </div>

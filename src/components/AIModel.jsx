@@ -1,7 +1,7 @@
 import { YOLO } from "@ultralytics/yolo";
 import { useEffect, useState, useRef } from "react";
 
-function AIModel({ videoRef, videoReady }) {
+function AIModel({ videoRef, videoReady, motionDetected, onDetection }) {
     const [model, setModel] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -40,12 +40,18 @@ function AIModel({ videoRef, videoReady }) {
                 return;
             }
 
+            if (!motionDetected) {
+                return;
+            }
+
             try {
                 isProcessing.current = true;
 
                 const res = await model.predict(videoRef.current);
 
                 console.log("Detections:", res.boxes.length);
+
+                let acceptedDetection = null;
 
                 res.boxes.forEach((box) => {
                     if (box.conf >= confidenceThreshold) {
@@ -60,6 +66,10 @@ function AIModel({ videoRef, videoReady }) {
                             box.x2,
                             box.y2
                         );
+
+                        if (acceptedDetection === null) {
+                            acceptedDetection = box;
+                        }
                     } else {
                         console.log(
                             "Rejected:",
@@ -74,6 +84,20 @@ function AIModel({ videoRef, videoReady }) {
                         );
                     }
                 });
+
+                if (acceptedDetection !== null) {
+                    onDetection({
+                        type: "bird",
+                        id: crypto.randomUUID(),
+                        timestamp: Date.now(),
+                        confidence: acceptedDetection.conf,
+                        name: acceptedDetection.name,
+                        x1: acceptedDetection.x1,
+                        y1: acceptedDetection.y1,
+                        x2: acceptedDetection.x2,
+                        y2: acceptedDetection.y2
+                    });
+                }
             } finally {
                 isProcessing.current = false;
             }
@@ -88,7 +112,7 @@ function AIModel({ videoRef, videoReady }) {
         return () => {
             clearInterval(interval);
         };
-    }, [model, videoReady, videoRef]);
+    }, [model, videoReady, videoRef, motionDetected, onDetection]);
 
     if (loading) {
         return <p>Loading AI model...</p>;

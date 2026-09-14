@@ -13,7 +13,7 @@ function Camera({ status, setStatus, onDetection }) {
     const armed = useRef(true);
     const consecutiveNoMotionFrames = useRef(0);
     const [videoReady, setVideoReady] = useState(false);
-
+    const [motionDetected, setMotionDetected] = useState(false);
 
     async function startCamera() {
         try {
@@ -133,6 +133,7 @@ function Camera({ status, setStatus, onDetection }) {
         // console.log(motionThreshold);
         if (motionPercentage > motionThreshold) {
             // Motion detected
+            setMotionDetected(true);
             consecutiveMotionFrames.current += 1;
 
             // Reset no-motion counter because motion is present
@@ -149,6 +150,7 @@ function Camera({ status, setStatus, onDetection }) {
                         lastDetectionTimeRef.current = currentTime;
 
                         const detection = {
+                            type: "motion",
                             id: crypto.randomUUID(),
                             timestamp: currentTime,
                             motionPercentage: motionPercentage
@@ -164,6 +166,7 @@ function Camera({ status, setStatus, onDetection }) {
         }
         else {
             // No motion detected
+            setMotionDetected(false);
             consecutiveMotionFrames.current = 0;
             consecutiveNoMotionFrames.current += 1;
 
@@ -226,7 +229,7 @@ function Camera({ status, setStatus, onDetection }) {
                         display: status === "active" ? "block" : "none"
                     }}
                 />
-                <AIModel videoRef={videoRef} videoReady={videoReady} />
+                <AIModel videoRef={videoRef} videoReady={videoReady} motionDetected={motionDetected} onDetection={onDetection} />
                 <canvas
                     ref={canvasRef}
                     style={{
