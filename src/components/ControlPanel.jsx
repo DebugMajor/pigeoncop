@@ -5,7 +5,7 @@ import {
     faVolumeHigh,
 } from "@fortawesome/free-solid-svg-icons";
 
-function ControlPanel({ status, setStatus }) {
+function ControlPanel({ status, setStatus, onTestDetection }) {
     return (
         <section className="control-panel">
             <div className="control-copy">
@@ -41,6 +41,14 @@ function ControlPanel({ status, setStatus }) {
                 >
                     <FontAwesomeIcon icon={faVolumeHigh} />
                     <span>Test Sound</span>
+                </button>
+
+                <button
+                    type="button"
+                    className="action-button action-tertiary"
+                    onClick={onTestDetection}
+                >
+                    <span>Test Detection</span>
                 </button>
             </div>
         </section>

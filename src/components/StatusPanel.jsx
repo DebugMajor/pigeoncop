@@ -27,7 +27,9 @@ function StatusPanel({ detections, status }) {
 
     const formatRuntime = (seconds) => {
         const hours = String(Math.floor(seconds / 3600)).padStart(2, "0");
-        const minutes = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
+        const minutes = String(
+            Math.floor((seconds % 3600) / 60)
+        ).padStart(2, "0");
         const remaining = String(seconds % 60).padStart(2, "0");
 
         return `${hours}:${minutes}:${remaining}`;
@@ -45,7 +47,9 @@ function StatusPanel({ detections, status }) {
                         <FontAwesomeIcon icon={faCrow} />
                     </div>
 
-                    <span className="telemetry-label">BIRDS TODAY</span>
+                    <span className="telemetry-label">
+                        BIRDS THIS SESSION
+                    </span>
                 </div>
 
                 <div className="telemetry-value">{birdCount}</div>
@@ -65,7 +69,9 @@ function StatusPanel({ detections, status }) {
                         <FontAwesomeIcon icon={faVolumeHigh} />
                     </div>
 
-                    <span className="telemetry-label">SOUND SYSTEM</span>
+                    <span className="telemetry-label">
+                        SOUND SYSTEM
+                    </span>
                 </div>
 
                 <div className="telemetry-word">READY</div>
@@ -97,7 +103,10 @@ function StatusPanel({ detections, status }) {
                     <span className="telemetry-label">AI ENGINE</span>
                 </div>
 
-                <div className={`telemetry-word ${status === "active" ? "live" : ""}`}>
+                <div
+                    className={`telemetry-word ${status === "active" ? "live" : ""
+                        }`}
+                >
                     {status === "active" ? "RUNNING" : "STANDBY"}
                 </div>
 

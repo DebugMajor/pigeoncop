@@ -14,9 +14,13 @@ function DetectionLog({ detections }) {
                 <div className="log-list">
                     {detections.map((detection) => {
                         const isBird = detection.type === "bird";
+                        const isTest = detection.testMode === true;
 
                         return (
-                            <article className="log-row" key={detection.id}>
+                            <article
+                                className="log-row"
+                                key={detection.id}
+                            >
                                 <span className="log-dot" />
 
                                 <div className="log-main">
@@ -36,11 +40,28 @@ function DetectionLog({ detections }) {
                                 <div className="log-detail">
                                     {isBird ? (
                                         <>
-                                            <span>{detection.name || "Pigeon"}</span>
+                                            <span>
+                                                {detection.name || "Pigeon"}
+
+                                                {isTest && (
+                                                    <small
+                                                        style={{
+                                                            marginLeft: "8px",
+                                                            opacity: 0.6,
+                                                        }}
+                                                    >
+                                                        TEST
+                                                    </small>
+                                                )}
+                                            </span>
 
                                             <strong>
-                                                {typeof detection.confidence === "number"
-                                                    ? `${(detection.confidence * 100).toFixed(0)}%`
+                                                {typeof detection.confidence ===
+                                                    "number"
+                                                    ? `${(
+                                                        detection.confidence *
+                                                        100
+                                                    ).toFixed(0)}%`
                                                     : "—"}
                                             </strong>
                                         </>
@@ -49,8 +70,11 @@ function DetectionLog({ detections }) {
                                             <span>Motion</span>
 
                                             <strong>
-                                                {typeof detection.motionPercentage === "number"
-                                                    ? `${detection.motionPercentage.toFixed(1)}%`
+                                                {typeof detection.motionPercentage ===
+                                                    "number"
+                                                    ? `${detection.motionPercentage.toFixed(
+                                                        1
+                                                    )}%`
                                                     : "—"}
                                             </strong>
                                         </>
