@@ -39,3 +39,7 @@ training-data-contact-sheet.jpg
 v2-box-contact-sheet.jpg
 v2-source-contact-sheet.jpg
 
+# Temporary AI test images
+temp-real-test/
+temp-v3-human-test/
+temp-v3-pigeon-test/
