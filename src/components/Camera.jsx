@@ -107,7 +107,7 @@ function Camera({ status, setStatus, onDetection }) {
         lastDetectionTimeRef.current = null;
     }
 
-      // SNAPSHOT
+    // SNAPSHOT
     function captureSnapshot() {
         const video = videoRef.current;
         const canvas = canvasRef.current;
@@ -151,6 +151,9 @@ function Camera({ status, setStatus, onDetection }) {
         const detectionWithSnapshot = {
             ...detection,
             snapshot,
+            capturedAt: snapshot ? Date.now() : null,
+            deterrentStatus:
+                detection.type === "bird" ? "Triggered" : "Not Applicable",
         };
 
         // Add confirmed event to application state
@@ -416,8 +419,8 @@ function Camera({ status, setStatus, onDetection }) {
                             width: `${width}px`,
                             height: `${height}px`,
                             border: `3px solid ${isHuman
-                                    ? "#00ff88"
-                                    : "#00ff88"
+                                ? "#00ff88"
+                                : "#00ff88"
                                 }`,
                             boxSizing:
                                 "border-box",

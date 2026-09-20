@@ -18,12 +18,21 @@ function AIModel({
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const [detections, setDetections] = useState([]);
-
     const aiPredictions = useRef(0);
     const isProcessing = useRef(false);
     const consecutiveNoPigeonFrames = useRef(0);
     const birdConfirmedRef = useRef(false);
+
+    const consecutiveHumanFrames = useRef(0);
+    const consecutiveNoHumanFrames = useRef(0);
+    const humanConfirmedRef = useRef(false);
+
+    const onDetectionRef = useRef(onDetection);
+    const onDetectionsChangeRef = useRef(onDetectionsChange);
+
+    onDetectionRef.current = onDetection;
+    onDetectionsChangeRef.current = onDetectionsChange;
+
     // LOAD PIGEON MODEL + FACE MODEL
     useEffect(() => {
         let cancelled = false;
@@ -128,11 +137,47 @@ function AIModel({
                 y2: box.y2,
             };
 
-            onDetection(birdEvent);
+            onDetectionRef.current(birdEvent);
 
             console.log("Bird confirmed!");
 
             aiPredictions.current = 0;
+        }
+    }
+
+    // HUMAN CONFIRMATION
+    function confirmHumanDetection(detection) {
+        if (humanConfirmedRef.current) {
+            return;
+        }
+
+        consecutiveHumanFrames.current += 1;
+
+        console.log(
+            "Human AI Confirmation:",
+            `${consecutiveHumanFrames.current} / 2`
+        );
+
+        if (consecutiveHumanFrames.current >= 2) {
+            humanConfirmedRef.current = true;
+
+            const humanEvent = {
+                type: "human",
+                id: crypto.randomUUID(),
+                timestamp: Date.now(),
+                confidence: detection.confidence,
+                name: "Human",
+                x1: detection.x1,
+                y1: detection.y1,
+                x2: detection.x2,
+                y2: detection.y2,
+            };
+
+            onDetectionRef.current(humanEvent);
+
+            console.log("Human confirmed!");
+
+            consecutiveHumanFrames.current = 0;
         }
     }
 
@@ -207,6 +252,41 @@ function AIModel({
                         }
                     );
 
+                if (faceDetections.length > 0) {
+                    consecutiveNoHumanFrames.current = 0;
+
+                    const bestHumanDetection =
+                        faceDetections.reduce(
+                            (best, current) =>
+                                current.confidence >
+                                    best.confidence
+                                    ? current
+                                    : best,
+                            faceDetections[0]
+                        );
+
+                    confirmHumanDetection(
+                        bestHumanDetection
+                    );
+
+                    console.log(
+                        "Human detected:",
+                        faceDetections.length
+                    );
+                } else {
+                    consecutiveHumanFrames.current = 0;
+                    consecutiveNoHumanFrames.current += 1;
+
+                    const requiredNoHumanFrames = 3;
+
+                    if (
+                        consecutiveNoHumanFrames.current >=
+                        requiredNoHumanFrames
+                    ) {
+                        humanConfirmedRef.current = false;
+                    }
+                }
+
                 // 2. PIGEON DETECTION
                 let pigeonDetections = [];
 
@@ -240,7 +320,9 @@ function AIModel({
                         "Pigeon YOLO output:",
                         result.boxes.map((box) => ({
                             confidence: box.conf,
-                            accepted: box.conf >= confidenceThreshold,
+                            accepted:
+                                box.conf >=
+                                confidenceThreshold,
                         }))
                     );
 
@@ -254,7 +336,9 @@ function AIModel({
                     if (acceptedPigeon) {
                         consecutiveNoPigeonFrames.current = 0;
 
-                        confirmBirdDetection(acceptedPigeon);
+                        confirmBirdDetection(
+                            acceptedPigeon
+                        );
                     } else {
                         aiPredictions.current = 0;
 
@@ -283,24 +367,15 @@ function AIModel({
                     }
                 }
 
-
                 // 3. COMBINE RESULTS
                 allDetections.push(
                     ...faceDetections,
                     ...pigeonDetections
                 );
 
-                setDetections(allDetections);
-                onDetectionsChange(
+                onDetectionsChangeRef.current(
                     allDetections
                 );
-
-                if (faceDetections.length > 0) {
-                    console.log(
-                        "Human detected:",
-                        faceDetections.length
-                    );
-                }
             } catch (err) {
                 console.error(
                     "Detection error:",
@@ -327,8 +402,6 @@ function AIModel({
         videoReady,
         videoRef,
         motionDetected,
-        onDetection,
-        onDetectionsChange,
     ]);
 
     // UI
@@ -353,14 +426,6 @@ function AIModel({
             <p>
                 AI Models Ready
             </p>
-
-            <pre>
-                {JSON.stringify(
-                    detections,
-                    null,
-                    2
-                )}
-            </pre>
         </div>
     );
 }

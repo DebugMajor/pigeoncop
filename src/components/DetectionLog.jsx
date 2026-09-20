@@ -14,6 +14,7 @@ function DetectionLog({ detections }) {
                 <div className="log-list">
                     {detections.map((detection) => {
                         const isBird = detection.type === "bird";
+                        const isHuman = detection.type === "human";
                         const isTest = detection.testMode === true;
 
                         return (
@@ -27,7 +28,9 @@ function DetectionLog({ detections }) {
                                     <strong>
                                         {isBird
                                             ? "Bird Detected"
-                                            : "Motion Detected"}
+                                            : isHuman
+                                                ? "Human Detected"
+                                                : "Motion Detected"}
                                     </strong>
 
                                     <span>
@@ -40,20 +43,63 @@ function DetectionLog({ detections }) {
                                 <div className="log-detail">
                                     {isBird ? (
                                         <>
-                                            <span>
-                                                {detection.name || "Pigeon"}
+                                            <div>
+                                                <span>
+                                                    {detection.name ||
+                                                        "Pigeon"}
 
-                                                {isTest && (
-                                                    <small
-                                                        style={{
-                                                            marginLeft: "8px",
-                                                            opacity: 0.6,
-                                                        }}
-                                                    >
-                                                        TEST
-                                                    </small>
+                                                    {isTest && (
+                                                        <small
+                                                            style={{
+                                                                marginLeft:
+                                                                    "8px",
+                                                                opacity: 0.6,
+                                                            }}
+                                                        >
+                                                            TEST
+                                                        </small>
+                                                    )}
+                                                </span>
+                                                {detection.snapshot && (
+                                                    <div className="detection-snapshot">
+                                                        <img
+                                                            src={detection.snapshot}
+                                                            alt="Bird detection"
+                                                        />
+                                                    </div>
                                                 )}
-                                            </span>
+
+                                                <div className="detection-meta">
+                                                    {detection.snapshot && (
+                                                        <span className="detection-meta-item">
+                                                            <strong>Captured</strong>
+                                                            <span className="meta-status">✓</span>
+                                                        </span>
+                                                    )}
+
+                                                    <span className="detection-meta-item">
+                                                        <strong>Deterrent</strong>
+                                                        <span className="meta-status">
+                                                            {detection.deterrentStatus || "Triggered"}
+                                                        </span>
+                                                    </span>
+                                                </div>
+
+                                            </div>
+
+                                            <strong>
+                                                {typeof detection.confidence ===
+                                                    "number"
+                                                    ? `${(
+                                                        detection.confidence *
+                                                        100
+                                                    ).toFixed(0)}%`
+                                                    : "—"}
+                                            </strong>
+                                        </>
+                                    ) : isHuman ? (
+                                        <>
+                                            <span>Human</span>
 
                                             <strong>
                                                 {typeof detection.confidence ===
