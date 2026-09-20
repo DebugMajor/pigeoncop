@@ -38,18 +38,13 @@ function ControlPanel({ status, setStatus, onTestDetection }) {
                 <button
                     type="button"
                     className="action-button action-tertiary"
+                    onClick={onTestDetection}
                 >
                     <FontAwesomeIcon icon={faVolumeHigh} />
                     <span>Test Sound</span>
                 </button>
 
-                <button
-                    type="button"
-                    className="action-button action-tertiary"
-                    onClick={onTestDetection}
-                >
-                    <span>Test Detection</span>
-                </button>
+
             </div>
         </section>
     );

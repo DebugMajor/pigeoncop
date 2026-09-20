@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import StatusCard from "./StatusCard";
 import AIModel from "./AIModel";
 
-function Camera({ status, setStatus, onDetection }) {
+function Camera({ status, setStatus, onDetection, onMotion }) {
     const videoRef = useRef(null);
     const streamRef = useRef(null);
     const canvasRef = useRef(null);
@@ -325,6 +325,7 @@ function Camera({ status, setStatus, onDetection }) {
                     motionPercentage.toFixed(2) +
                     "%"
                 );
+                onMotion(motionPercentage)
 
                 consecutiveMotionFrames.current = 0;
                 armed.current = false;

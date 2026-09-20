@@ -5,21 +5,52 @@ import DetectionLog from "./components/DetectionLog";
 import Footer from "./components/Footer";
 import StatusPanel from "./components/StatusPanel";
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function App() {
     const [status, setStatus] = useState("offline");
     const [detections, setDetections] = useState([]);
+    const [motionEvents, setMotionEvents] = useState(0);
     const [testTrigger, setTestTrigger] = useState(0);
+    const testSoundRef = useRef(null);
+
+    useEffect(() => {
+        return () => {
+            if (testSoundRef.current) {
+                testSoundRef.current.pause();
+                testSoundRef.current = null;
+            }
+        };
+    }, []);
 
     const handleDetection = (detection) => {
         setDetections((prevDetections) =>
             [detection, ...prevDetections].slice(0, 20)
         );
     };
+    const handleMotion = () => {
+        setMotionEvents((prev) => prev + 1);
+    };
 
     const handleTestDetection = () => {
-        setTestTrigger((prev) => prev + 1);
+        if (!testSoundRef.current) {
+            testSoundRef.current = new Audio(
+                "/sounds/motion-feedback-soothing-rock.wav"
+            );
+
+            testSoundRef.current.preload = "auto";
+        }
+
+        testSoundRef.current.currentTime = 0;
+
+        testSoundRef.current
+            .play()
+            .then(() => {
+                console.log("Test sound played");
+            })
+            .catch((error) => {
+                console.log("Test sound playback failed:", error);
+            });
     };
 
     return (
@@ -85,6 +116,7 @@ function App() {
                                 status={status}
                                 setStatus={setStatus}
                                 onDetection={handleDetection}
+                                onMotion={handleMotion}
                                 testTrigger={testTrigger}
                             />
                         </div>
@@ -129,6 +161,7 @@ function App() {
                             <StatusPanel
                                 detections={detections}
                                 status={status}
+                                motionEvents={motionEvents}
                             />
                         </div>
                     </aside>

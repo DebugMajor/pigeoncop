@@ -4,10 +4,11 @@ import {
     faVolumeHigh,
     faStopwatch,
     faMicrochip,
+    faPersonWalking,
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 
-function StatusPanel({ detections, status }) {
+function StatusPanel({ detections, status, motionEvents }) {
     const [runtime, setRuntime] = useState(0);
 
     useEffect(() => {
@@ -38,6 +39,36 @@ function StatusPanel({ detections, status }) {
     const birdCount = detections.filter(
         (detection) => detection.type === "bird"
     ).length;
+
+    const deterrentCount = detections.filter(
+        (detection) => detection.deterrentStatus === "Triggered"
+    ).length;
+
+    const confidenceDetections = detections.filter(
+        (detection) => typeof detection.confidence === "number"
+    );
+
+    const averageConfidence =
+        confidenceDetections.length > 0
+            ? confidenceDetections.reduce(
+                (sum, detection) => sum + detection.confidence,
+                0
+            ) / confidenceDetections.length
+            : 0;
+
+    const lastDetection = detections[0];
+
+    const lastDetectionLabel = lastDetection
+        ? lastDetection.type === "bird"
+            ? lastDetection.name || "Pigeon"
+            : lastDetection.type === "human"
+                ? "Human"
+                : "Motion"
+        : "None";
+
+    const lastDetectionTime = lastDetection
+        ? new Date(lastDetection.timestamp).toLocaleTimeString()
+        : "—";
 
     return (
         <>
@@ -74,8 +105,33 @@ function StatusPanel({ detections, status }) {
                     </span>
                 </div>
 
-                <div className="telemetry-word">READY</div>
-                <p>Deterrent controls available</p>
+                <div className="telemetry-value">{deterrentCount}</div>
+
+                <p>
+                    {deterrentCount
+                        ? "Deterrent triggered"
+                        : "No deterrents triggered yet"}
+                </p>
+            </article>
+
+            <article className="telemetry-card">
+                <div className="telemetry-top">
+                    <div className="telemetry-icon">
+                        <FontAwesomeIcon icon={faPersonWalking} />
+                    </div>
+
+                    <span className="telemetry-label">
+                        MOTION EVENTS
+                    </span>
+                </div>
+
+                <div className="telemetry-value">{motionEvents}</div>
+
+                <p>
+                    {motionEvents
+                        ? "Motion events detected"
+                        : "No motion events yet"}
+                </p>
             </article>
 
             <article className="telemetry-card">
@@ -84,7 +140,9 @@ function StatusPanel({ detections, status }) {
                         <FontAwesomeIcon icon={faStopwatch} />
                     </div>
 
-                    <span className="telemetry-label">RUNTIME</span>
+                    <span className="telemetry-label">
+                        RUNTIME
+                    </span>
                 </div>
 
                 <div className="telemetry-word telemetry-time">
@@ -100,7 +158,9 @@ function StatusPanel({ detections, status }) {
                         <FontAwesomeIcon icon={faMicrochip} />
                     </div>
 
-                    <span className="telemetry-label">AI ENGINE</span>
+                    <span className="telemetry-label">
+                        AI ENGINE
+                    </span>
                 </div>
 
                 <div
@@ -110,7 +170,16 @@ function StatusPanel({ detections, status }) {
                     {status === "active" ? "RUNNING" : "STANDBY"}
                 </div>
 
-                <p>YOLO + WebGPU inference</p>
+                <p>
+                    YOLO + WebGPU inference
+                    <br />
+                    Avg. confidence:{" "}
+                    {averageConfidence
+                        ? `${(averageConfidence * 100).toFixed(1)}%`
+                        : "—"}
+                    <br />
+                    Last detection: {lastDetectionLabel} · {lastDetectionTime}
+                </p>
             </article>
         </>
     );
