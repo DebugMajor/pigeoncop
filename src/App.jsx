@@ -13,8 +13,6 @@ function App() {
     const [testTrigger, setTestTrigger] = useState(0);
 
     const handleDetection = (detection) => {
-        console.log("APP EVENT RECEIVED:", detection);
-
         setDetections((prevDetections) =>
             [detection, ...prevDetections].slice(0, 20)
         );

@@ -18,7 +18,7 @@ function Camera({ status, setStatus, onDetection }) {
     const [detections, setDetections] = useState([]);
 
     const deterrentSoundRef = useRef(null);
-
+    const deterrentCooldownUntilRef = useRef(0);
 
     // DETERRENT SOUND
     useEffect(() => {
@@ -153,7 +153,7 @@ function Camera({ status, setStatus, onDetection }) {
             snapshot,
             capturedAt: snapshot ? Date.now() : null,
             deterrentStatus:
-                detection.type === "bird" ? "Triggered" : "Not Applicable",
+                detection.type === "bird" ? "Triggered" : "Cooldown",
         };
 
         // Add confirmed event to application state
@@ -161,7 +161,18 @@ function Camera({ status, setStatus, onDetection }) {
 
         // Activate deterrent ONLY for a confirmed bird
         if (detection.type === "bird") {
+            const currentTime = Date.now();
+            const cooldownMs = 30000;
+
+            if (currentTime < deterrentCooldownUntilRef.current) {
+                console.log("Deterrent skipped - cooldown active.");
+                return;
+            }
+
             if (deterrentSoundRef.current) {
+                deterrentCooldownUntilRef.current =
+                    currentTime + cooldownMs;
+
                 deterrentSoundRef.current.currentTime = 0;
 
                 deterrentSoundRef.current
