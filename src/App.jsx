@@ -11,10 +11,26 @@ function App() {
     const [status, setStatus] = useState("offline");
     const [detections, setDetections] = useState([]);
     const [motionEvents, setMotionEvents] = useState(0);
+    const [deterrentEvents, setDeterrentEvents] = useState(0);
     const [sourceMode, setSourceMode] = useState("live");
-    // const [testTrigger, setTestTrigger] = useState(0);
+
     const [resetTrigger, setResetTrigger] = useState(0);
+
+    const [playbackCommand, setPlaybackCommand] = useState(0);
+    const [playbackAction, setPlaybackAction] = useState("play");
+    const [testVideoPlaying, setTestVideoPlaying] = useState(false);
+
     const testSoundRef = useRef(null);
+
+    useEffect(() => {
+        if (status === "active" && sourceMode === "test") {
+            setTestVideoPlaying(true);
+        }
+
+        if (status !== "active") {
+            setTestVideoPlaying(false);
+        }
+    }, [status, sourceMode]);
 
     useEffect(() => {
         return () => {
@@ -35,11 +51,28 @@ function App() {
         setMotionEvents((prev) => prev + 1);
     };
 
+    const handleDeterrent = () => {
+        setDeterrentEvents((prev) => prev + 1);
+    };
+
     const handleResetTest = () => {
         setDetections([]);
         setMotionEvents(0);
+        setDeterrentEvents(0);
+        setTestVideoPlaying(true);
+        setPlaybackAction("play");
         setResetTrigger((prev) => prev + 1);
-    }
+    };
+
+    const handleTogglePlayback = () => {
+        const nextPlaying = !testVideoPlaying;
+
+        setTestVideoPlaying(nextPlaying);
+        setPlaybackAction(
+            nextPlaying ? "play" : "pause"
+        );
+        setPlaybackCommand((prev) => prev + 1);
+    };
 
     const handleTestDetection = () => {
         if (!testSoundRef.current) {
@@ -58,7 +91,10 @@ function App() {
                 console.log("Test sound played");
             })
             .catch((error) => {
-                console.log("Test sound playback failed:", error);
+                console.log(
+                    "Test sound playback failed:",
+                    error
+                );
             });
     };
 
@@ -75,7 +111,8 @@ function App() {
                         </div>
 
                         <h1>
-                            Detect. Deter. <span>Protect.</span>
+                            Detect. Deter.{" "}
+                            <span>Protect.</span>
                         </h1>
 
                         <p>
@@ -85,16 +122,22 @@ function App() {
                     </div>
 
                     <div
-                        className={`session-state ${status === "active" ? "is-active" : ""
+                        className={`session-state ${status === "active"
+                                ? "is-active"
+                                : ""
                             }`}
                     >
                         <span className="session-dot" />
 
                         <div>
-                            <span className="session-label">SYSTEM</span>
+                            <span className="session-label">
+                                SYSTEM
+                            </span>
 
                             <strong>
-                                {status === "active" ? "ACTIVE" : "READY"}
+                                {status === "active"
+                                    ? "ACTIVE"
+                                    : "READY"}
                             </strong>
                         </div>
                     </div>
@@ -126,19 +169,45 @@ function App() {
                                 setStatus={setStatus}
                                 onDetection={handleDetection}
                                 onMotion={handleMotion}
-                                // testTrigger={testTrigger}
-                                resetTrigger={resetTrigger}
-                                sourceMode={sourceMode}
+                                onDeterrent={
+                                    handleDeterrent
+                                }
+                                resetTrigger={
+                                    resetTrigger
+                                }
+                                sourceMode={
+                                    sourceMode
+                                }
+                                playbackCommand={
+                                    playbackCommand
+                                }
+                                playbackAction={
+                                    playbackAction
+                                }
                             />
                         </div>
 
                         <ControlPanel
                             status={status}
                             setStatus={setStatus}
-                            onTestDetection={handleTestDetection}
-                            sourceMode={sourceMode}
-                            setSourceMode={setSourceMode}
-                            onResetTest={handleResetTest}
+                            onTestDetection={
+                                handleTestDetection
+                            }
+                            sourceMode={
+                                sourceMode
+                            }
+                            setSourceMode={
+                                setSourceMode
+                            }
+                            onResetTest={
+                                handleResetTest
+                            }
+                            onTogglePlayback={
+                                handleTogglePlayback
+                            }
+                            testVideoPlaying={
+                                testVideoPlaying
+                            }
                         />
 
                         <section className="activity-panel">
@@ -148,7 +217,9 @@ function App() {
                                         02 / ACTIVITY
                                     </span>
 
-                                    <h2>Detection Events</h2>
+                                    <h2>
+                                        Detection Events
+                                    </h2>
                                 </div>
 
                                 <span className="event-count">
@@ -156,7 +227,9 @@ function App() {
                                 </span>
                             </div>
 
-                            <DetectionLog detections={detections} />
+                            <DetectionLog
+                                detections={detections}
+                            />
                         </section>
                     </div>
 
@@ -173,9 +246,16 @@ function App() {
 
                         <div className="metrics-stack">
                             <StatusPanel
-                                detections={detections}
+                                detections={
+                                    detections
+                                }
                                 status={status}
-                                motionEvents={motionEvents}
+                                motionEvents={
+                                    motionEvents
+                                }
+                                deterrentEvents={
+                                    deterrentEvents
+                                }
                             />
                         </div>
                     </aside>

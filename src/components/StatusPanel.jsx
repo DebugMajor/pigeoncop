@@ -8,7 +8,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 
-function StatusPanel({ detections, status, motionEvents }) {
+function StatusPanel({
+    detections,
+    status,
+    motionEvents,
+    deterrentEvents,
+}) {
     const [runtime, setRuntime] = useState(0);
 
     useEffect(() => {
@@ -20,40 +25,52 @@ function StatusPanel({ detections, status, motionEvents }) {
         const startedAt = Date.now();
 
         const interval = setInterval(() => {
-            setRuntime(Math.floor((Date.now() - startedAt) / 1000));
+            setRuntime(
+                Math.floor(
+                    (Date.now() - startedAt) / 1000
+                )
+            );
         }, 1000);
 
         return () => clearInterval(interval);
     }, [status]);
 
     const formatRuntime = (seconds) => {
-        const hours = String(Math.floor(seconds / 3600)).padStart(2, "0");
+        const hours = String(
+            Math.floor(seconds / 3600)
+        ).padStart(2, "0");
+
         const minutes = String(
             Math.floor((seconds % 3600) / 60)
         ).padStart(2, "0");
-        const remaining = String(seconds % 60).padStart(2, "0");
+
+        const remaining = String(
+            seconds % 60
+        ).padStart(2, "0");
 
         return `${hours}:${minutes}:${remaining}`;
     };
 
     const birdCount = detections.filter(
-        (detection) => detection.type === "bird"
+        (detection) =>
+            detection.type === "bird"
     ).length;
 
-    const deterrentCount = detections.filter(
-        (detection) => detection.deterrentStatus === "Triggered"
-    ).length;
-
-    const confidenceDetections = detections.filter(
-        (detection) => typeof detection.confidence === "number"
-    );
+    const confidenceDetections =
+        detections.filter(
+            (detection) =>
+                typeof detection.confidence ===
+                "number"
+        );
 
     const averageConfidence =
         confidenceDetections.length > 0
             ? confidenceDetections.reduce(
-                (sum, detection) => sum + detection.confidence,
+                (sum, detection) =>
+                    sum + detection.confidence,
                 0
-            ) / confidenceDetections.length
+            ) /
+            confidenceDetections.length
             : 0;
 
     const lastDetection = detections[0];
@@ -67,7 +84,9 @@ function StatusPanel({ detections, status, motionEvents }) {
         : "None";
 
     const lastDetectionTime = lastDetection
-        ? new Date(lastDetection.timestamp).toLocaleTimeString()
+        ? new Date(
+            lastDetection.timestamp
+        ).toLocaleTimeString()
         : "—";
 
     return (
@@ -83,7 +102,9 @@ function StatusPanel({ detections, status, motionEvents }) {
                     </span>
                 </div>
 
-                <div className="telemetry-value">{birdCount}</div>
+                <div className="telemetry-value">
+                    {birdCount}
+                </div>
 
                 <p>
                     {birdCount
@@ -97,7 +118,9 @@ function StatusPanel({ detections, status, motionEvents }) {
             <article className="telemetry-card">
                 <div className="telemetry-top">
                     <div className="telemetry-icon">
-                        <FontAwesomeIcon icon={faVolumeHigh} />
+                        <FontAwesomeIcon
+                            icon={faVolumeHigh}
+                        />
                     </div>
 
                     <span className="telemetry-label">
@@ -105,11 +128,13 @@ function StatusPanel({ detections, status, motionEvents }) {
                     </span>
                 </div>
 
-                <div className="telemetry-value">{deterrentCount}</div>
+                <div className="telemetry-value">
+                    {deterrentEvents}
+                </div>
 
                 <p>
-                    {deterrentCount
-                        ? "Deterrent triggered"
+                    {deterrentEvents
+                        ? "Deterrent activations"
                         : "No deterrents triggered yet"}
                 </p>
             </article>
@@ -117,7 +142,9 @@ function StatusPanel({ detections, status, motionEvents }) {
             <article className="telemetry-card">
                 <div className="telemetry-top">
                     <div className="telemetry-icon">
-                        <FontAwesomeIcon icon={faPersonWalking} />
+                        <FontAwesomeIcon
+                            icon={faPersonWalking}
+                        />
                     </div>
 
                     <span className="telemetry-label">
@@ -125,7 +152,9 @@ function StatusPanel({ detections, status, motionEvents }) {
                     </span>
                 </div>
 
-                <div className="telemetry-value">{motionEvents}</div>
+                <div className="telemetry-value">
+                    {motionEvents}
+                </div>
 
                 <p>
                     {motionEvents
@@ -137,7 +166,9 @@ function StatusPanel({ detections, status, motionEvents }) {
             <article className="telemetry-card">
                 <div className="telemetry-top">
                     <div className="telemetry-icon">
-                        <FontAwesomeIcon icon={faStopwatch} />
+                        <FontAwesomeIcon
+                            icon={faStopwatch}
+                        />
                     </div>
 
                     <span className="telemetry-label">
@@ -149,13 +180,17 @@ function StatusPanel({ detections, status, motionEvents }) {
                     {formatRuntime(runtime)}
                 </div>
 
-                <p>Current monitoring session</p>
+                <p>
+                    Current monitoring session
+                </p>
             </article>
 
             <article className="telemetry-card">
                 <div className="telemetry-top">
                     <div className="telemetry-icon">
-                        <FontAwesomeIcon icon={faMicrochip} />
+                        <FontAwesomeIcon
+                            icon={faMicrochip}
+                        />
                     </div>
 
                     <span className="telemetry-label">
@@ -164,10 +199,14 @@ function StatusPanel({ detections, status, motionEvents }) {
                 </div>
 
                 <div
-                    className={`telemetry-word ${status === "active" ? "live" : ""
+                    className={`telemetry-word ${status === "active"
+                            ? "live"
+                            : ""
                         }`}
                 >
-                    {status === "active" ? "RUNNING" : "STANDBY"}
+                    {status === "active"
+                        ? "RUNNING"
+                        : "STANDBY"}
                 </div>
 
                 <p>
@@ -175,10 +214,15 @@ function StatusPanel({ detections, status, motionEvents }) {
                     <br />
                     Avg. confidence:{" "}
                     {averageConfidence
-                        ? `${(averageConfidence * 100).toFixed(1)}%`
+                        ? `${(
+                            averageConfidence *
+                            100
+                        ).toFixed(1)}%`
                         : "—"}
                     <br />
-                    Last detection: {lastDetectionLabel} · {lastDetectionTime}
+                    Last detection:{" "}
+                    {lastDetectionLabel} ·{" "}
+                    {lastDetectionTime}
                 </p>
             </article>
         </>

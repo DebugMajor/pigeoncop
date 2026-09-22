@@ -7,8 +7,11 @@ function Camera({
     setStatus,
     onDetection,
     onMotion,
+    onDeterrent,
     sourceMode,
     resetTrigger,
+    playbackCommand,
+    playbackAction,
 }) {
     const videoRef = useRef(null);
     const streamRef = useRef(null);
@@ -18,14 +21,21 @@ function Camera({
     const lastDetectionTimeRef = useRef(null);
     const consecutiveMotionFrames = useRef(0);
     const armed = useRef(true);
-    const consecutiveNoMotionFrames = useRef(0);
+    const consecutiveNoMotionFrames =
+        useRef(0);
 
-    const [videoReady, setVideoReady] = useState(false);
-    const [motionDetected, setMotionDetected] = useState(false);
-    const [detections, setDetections] = useState([]);
+    const [videoReady, setVideoReady] =
+        useState(false);
+
+    const [motionDetected, setMotionDetected] =
+        useState(false);
+
+    const [detections, setDetections] =
+        useState([]);
 
     const deterrentSoundRef = useRef(null);
-    const deterrentCooldownUntilRef = useRef(0);
+    const deterrentCooldownUntilRef =
+        useRef(0);
 
     // DETERRENT SOUND
     useEffect(() => {
@@ -33,12 +43,14 @@ function Camera({
             "/sounds/motion-feedback-soothing-rock.wav"
         );
 
-        deterrentSoundRef.current.preload = "auto";
+        deterrentSoundRef.current.preload =
+            "auto";
 
         return () => {
             if (deterrentSoundRef.current) {
                 deterrentSoundRef.current.pause();
-                deterrentSoundRef.current = null;
+                deterrentSoundRef.current =
+                    null;
             }
         };
     }, []);
@@ -48,10 +60,14 @@ function Camera({
         try {
             if (sourceMode === "test") {
                 if (videoRef.current) {
-                    videoRef.current.srcObject = null;
-                    videoRef.current.src = "/videos/pigeon-test.mp4";
+                    videoRef.current.srcObject =
+                        null;
+
+                    videoRef.current.src =
+                        "/videos/pigeon-test.mp4";
+
                     videoRef.current.loop = true;
-                    videoRef.current.muted = true;
+
                     videoRef.current.currentTime = 0;
 
                     await videoRef.current.play();
@@ -62,16 +78,22 @@ function Camera({
             }
 
             const stream =
-                await navigator.mediaDevices.getUserMedia({
-                    video: true,
-                });
+                await navigator.mediaDevices.getUserMedia(
+                    {
+                        video: true,
+                    }
+                );
 
             streamRef.current = stream;
 
             if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-                videoRef.current.removeAttribute("src");
-                videoRef.current.muted = false;
+                videoRef.current.srcObject =
+                    stream;
+
+                videoRef.current.removeAttribute(
+                    "src"
+                );
+
                 await videoRef.current.play();
             }
 
@@ -93,20 +115,59 @@ function Camera({
         if (status === "loading") {
             startCamera();
         } else if (status === "active") {
-            if (intervalRef.current == null) {
-                intervalRef.current = setInterval(
-                    captureFrame,
-                    500
-                );
+            if (
+                intervalRef.current == null
+            ) {
+                intervalRef.current =
+                    setInterval(
+                        captureFrame,
+                        500
+                    );
             }
-        } else if (status === "stopping") {
+        } else if (
+            status === "stopping"
+        ) {
             stopCamera();
         }
     }, [status]);
 
+    // TEST VIDEO PLAYBACK
+    useEffect(() => {
+        if (
+            sourceMode !== "test" ||
+            playbackCommand === 0
+        ) {
+            return;
+        }
+
+        const video = videoRef.current;
+
+        if (!video) {
+            return;
+        }
+
+        if (playbackAction === "play") {
+            video.play().catch((error) => {
+                console.log(
+                    "Test video playback failed:",
+                    error
+                );
+            });
+        } else {
+            video.pause();
+        }
+    }, [
+        playbackCommand,
+        playbackAction,
+        sourceMode,
+    ]);
+
     // RESET TEST
     useEffect(() => {
-        if (sourceMode !== "test" || resetTrigger === 0) {
+        if (
+            sourceMode !== "test" ||
+            resetTrigger === 0
+        ) {
             return;
         }
 
@@ -119,15 +180,21 @@ function Camera({
         video.currentTime = 0;
 
         prevFrameRef.current = null;
+
         consecutiveMotionFrames.current = 0;
-        consecutiveNoMotionFrames.current = 0;
+
+        consecutiveNoMotionFrames.current =
+            0;
+
         armed.current = true;
+
         lastDetectionTimeRef.current = null;
 
         setMotionDetected(false);
         setDetections([]);
 
-        deterrentCooldownUntilRef.current = 0;
+        deterrentCooldownUntilRef.current =
+            0;
 
         video.play().catch((error) => {
             console.log(
@@ -135,11 +202,16 @@ function Camera({
                 error
             );
         });
-    }, [resetTrigger, sourceMode]);
+    }, [
+        resetTrigger,
+        sourceMode,
+    ]);
 
     // STOP CAMERA
     function stopCamera() {
-        if (streamRef.current != null) {
+        if (
+            streamRef.current != null
+        ) {
             const tracks =
                 streamRef.current.getTracks();
 
@@ -150,35 +222,57 @@ function Camera({
             streamRef.current = null;
         }
 
-        if (videoRef.current?.srcObject != null) {
-            videoRef.current.srcObject = null;
+        if (
+            videoRef.current?.srcObject !=
+            null
+        ) {
+            videoRef.current.srcObject =
+                null;
         }
 
         if (videoRef.current) {
             videoRef.current.pause();
 
-            if (sourceMode === "test") {
-                videoRef.current.removeAttribute("src");
+            if (
+                sourceMode === "test"
+            ) {
+                videoRef.current.removeAttribute(
+                    "src"
+                );
+
                 videoRef.current.load();
             }
         }
 
         setStatus("offline");
 
-        clearInterval(intervalRef.current);
+        clearInterval(
+            intervalRef.current
+        );
+
         intervalRef.current = null;
 
         setVideoReady(false);
+
         setMotionDetected(false);
+
         setDetections([]);
 
         prevFrameRef.current = null;
-        consecutiveMotionFrames.current = 0;
-        consecutiveNoMotionFrames.current = 0;
-        armed.current = true;
-        lastDetectionTimeRef.current = null;
 
-        deterrentCooldownUntilRef.current = 0;
+        consecutiveMotionFrames.current =
+            0;
+
+        consecutiveNoMotionFrames.current =
+            0;
+
+        armed.current = true;
+
+        lastDetectionTimeRef.current =
+            null;
+
+        deterrentCooldownUntilRef.current =
+            0;
     }
 
     // SNAPSHOT
@@ -195,10 +289,14 @@ function Camera({
             return null;
         }
 
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
+        canvas.width =
+            video.videoWidth;
 
-        const context = canvas.getContext("2d");
+        canvas.height =
+            video.videoHeight;
+
+        const context =
+            canvas.getContext("2d");
 
         if (!context) {
             return null;
@@ -220,7 +318,9 @@ function Camera({
 
     // DETERRENT PRESENCE
     function handleBirdPresence() {
-        const currentTime = Date.now();
+        const currentTime =
+            Date.now();
+
         const cooldownMs = 30000;
 
         if (
@@ -230,14 +330,17 @@ function Camera({
             return;
         }
 
-        if (!deterrentSoundRef.current) {
+        if (
+            !deterrentSoundRef.current
+        ) {
             return;
         }
 
         deterrentCooldownUntilRef.current =
             currentTime + cooldownMs;
 
-        deterrentSoundRef.current.currentTime = 0;
+        deterrentSoundRef.current.currentTime =
+            0;
 
         deterrentSoundRef.current
             .play()
@@ -245,6 +348,8 @@ function Camera({
                 console.log(
                     "Deterrent activated for confirmed pigeon."
                 );
+
+                onDeterrent();
             })
             .catch((error) => {
                 console.log(
@@ -255,13 +360,19 @@ function Camera({
     }
 
     // CONFIRMED DETECTION
-    function handleConfirmedDetection(detection) {
-        const snapshot = captureSnapshot();
+    function handleConfirmedDetection(
+        detection
+    ) {
+        const snapshot =
+            captureSnapshot();
 
         const detectionWithSnapshot = {
             ...detection,
             snapshot,
-            capturedAt: snapshot ? Date.now() : null,
+            capturedAt: snapshot
+                ? Date.now()
+                : null,
+
             deterrentStatus:
                 detection.type === "bird"
                     ? "Triggered"
@@ -269,13 +380,18 @@ function Camera({
         };
 
         // Add confirmed event to application state
-        onDetection(detectionWithSnapshot);
+        onDetection(
+            detectionWithSnapshot
+        );
     }
 
     //Motion Detection
     function captureFrame() {
-        const canvasObj = canvasRef.current;
-        const video = videoRef.current;
+        const canvasObj =
+            canvasRef.current;
+
+        const video =
+            videoRef.current;
 
         if (
             !canvasObj ||
@@ -287,14 +403,19 @@ function Camera({
         }
 
         const context =
-            canvasObj.getContext("2d");
+            canvasObj.getContext(
+                "2d"
+            );
 
         if (!context) {
             return;
         }
 
-        canvasObj.width = video.videoWidth;
-        canvasObj.height = video.videoHeight;
+        canvasObj.width =
+            video.videoWidth;
+
+        canvasObj.height =
+            video.videoHeight;
 
         context.drawImage(
             video,
@@ -312,8 +433,12 @@ function Camera({
                 canvasObj.height
             );
 
-        if (prevFrameRef.current === null) {
-            prevFrameRef.current = currentFrame;
+        if (
+            prevFrameRef.current === null
+        ) {
+            prevFrameRef.current =
+                currentFrame;
+
             return;
         }
 
@@ -382,9 +507,11 @@ function Camera({
             consecutiveMotionFrames.current +=
                 1;
 
-            consecutiveNoMotionFrames.current = 0;
+            consecutiveNoMotionFrames.current =
+                0;
 
-            const currentTime = Date.now();
+            const currentTime =
+                Date.now();
 
             if (
                 consecutiveMotionFrames.current >=
@@ -403,24 +530,31 @@ function Camera({
 
                 console.log(
                     "Motion detected - AI gate opened:",
-                    motionPercentage.toFixed(2) +
-                    "%"
+                    motionPercentage.toFixed(
+                        2
+                    ) + "%"
                 );
 
-                onMotion(motionPercentage);
+                onMotion(
+                    motionPercentage
+                );
 
-                consecutiveMotionFrames.current = 0;
+                consecutiveMotionFrames.current =
+                    0;
+
                 armed.current = false;
             }
         } else {
             setMotionDetected(false);
 
-            consecutiveMotionFrames.current = 0;
+            consecutiveMotionFrames.current =
+                0;
 
             consecutiveNoMotionFrames.current +=
                 1;
 
-            const requiredNoMotionFrames = 3;
+            const requiredNoMotionFrames =
+                3;
 
             if (
                 consecutiveNoMotionFrames.current >=
@@ -432,7 +566,8 @@ function Camera({
     }
 
     function renderBoundingBoxes() {
-        const video = videoRef.current;
+        const video =
+            videoRef.current;
 
         if (
             !video ||
@@ -457,8 +592,10 @@ function Camera({
             video.videoHeight;
 
         const scale = Math.max(
-            containerWidth / videoWidth,
-            containerHeight / videoHeight
+            containerWidth /
+            videoWidth,
+            containerHeight /
+            videoHeight
         );
 
         const renderedWidth =
@@ -478,7 +615,10 @@ function Camera({
             2;
 
         return detections.map(
-            (detection, index) => {
+            (
+                detection,
+                index
+            ) => {
                 const left =
                     detection.x1 *
                     scale +
@@ -507,19 +647,26 @@ function Camera({
                     <div
                         key={`${detection.id ?? "detection"}-${index}`}
                         style={{
-                            position: "absolute",
+                            position:
+                                "absolute",
+
                             left: `${left}px`,
                             top: `${top}px`,
+
                             width: `${width}px`,
                             height: `${height}px`,
+
                             border: `3px solid ${isHuman
                                     ? "#00ff88"
                                     : "#00ff88"
                                 }`,
+
                             boxSizing:
                                 "border-box",
+
                             pointerEvents:
                                 "none",
+
                             zIndex: 10,
                         }}
                     >
@@ -527,21 +674,30 @@ function Camera({
                             style={{
                                 position:
                                     "absolute",
+
                                 top: "-30px",
                                 left: "-3px",
+
                                 background:
                                     "#00ff88",
+
                                 color: "#000",
+
                                 padding:
                                     "4px 8px",
+
                                 fontSize:
                                     "12px",
+
                                 fontWeight:
                                     "700",
+
                                 lineHeight:
                                     "1",
+
                                 borderRadius:
                                     "4px",
+
                                 whiteSpace:
                                     "nowrap",
                             }}
@@ -589,7 +745,8 @@ function Camera({
                 className="card shadow-lg p-3 section-spacing"
                 style={{
                     display:
-                        status === "offline" ||
+                        status ===
+                            "offline" ||
                             status === "error"
                             ? "none"
                             : "block",
@@ -597,7 +754,8 @@ function Camera({
             >
                 <div className="camera-header">
                     <h5 className="camera-title">
-                        {sourceMode === "test"
+                        {sourceMode ===
+                            "test"
                             ? "Test Video Feed"
                             : "Live Camera Feed"}
                     </h5>
@@ -607,7 +765,8 @@ function Camera({
                     {status === "active" && (
                         <div className="monitoring-status">
                             🟢{" "}
-                            {sourceMode === "test"
+                            {sourceMode ===
+                                "test"
                                 ? "TEST MODE"
                                 : "MONITORING ACTIVE"}
                         </div>
@@ -616,31 +775,53 @@ function Camera({
 
                 <div
                     style={{
-                        position: "relative",
+                        position:
+                            "relative",
+
                         width: "100%",
-                        maxWidth: "900px",
-                        margin: "0 auto",
-                        overflow: "hidden",
+
+                        maxWidth:
+                            "900px",
+
+                        margin:
+                            "0 auto",
+
+                        overflow:
+                            "hidden",
                     }}
                 >
                     <video
                         onLoadedMetadata={() =>
-                            setVideoReady(true)
+                            setVideoReady(
+                                true
+                            )
                         }
                         ref={videoRef}
                         autoPlay
                         playsInline
-                        muted={sourceMode === "test"}
+                        muted={
+                            sourceMode ===
+                            "test"
+                        }
                         className="d-block mx-auto videoEl"
                         style={{
                             width: "100%",
-                            maxWidth: "900px",
-                            maxHeight: "55vh",
+
+                            maxWidth:
+                                "900px",
+
+                            maxHeight:
+                                "55vh",
+
                             aspectRatio:
                                 "16 / 9",
-                            objectFit: "cover",
+
+                            objectFit:
+                                "cover",
+
                             display:
-                                status === "active"
+                                status ===
+                                    "active"
                                     ? "block"
                                     : "none",
                         }}
@@ -651,15 +832,21 @@ function Camera({
 
                 <AIModel
                     videoRef={videoRef}
-                    videoReady={videoReady}
-                    motionDetected={motionDetected}
+                    videoReady={
+                        videoReady
+                    }
+                    motionDetected={
+                        motionDetected
+                    }
                     onDetection={
                         handleConfirmedDetection
                     }
                     onDetectionsChange={
                         setDetections
                     }
-                    resetTrigger={resetTrigger}
+                    resetTrigger={
+                        resetTrigger
+                    }
                     onBirdPresence={
                         handleBirdPresence
                     }
