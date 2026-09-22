@@ -11,7 +11,9 @@ function App() {
     const [status, setStatus] = useState("offline");
     const [detections, setDetections] = useState([]);
     const [motionEvents, setMotionEvents] = useState(0);
-    const [testTrigger, setTestTrigger] = useState(0);
+    const [sourceMode, setSourceMode] = useState("live");
+    // const [testTrigger, setTestTrigger] = useState(0);
+    const [resetTrigger, setResetTrigger] = useState(0);
     const testSoundRef = useRef(null);
 
     useEffect(() => {
@@ -28,9 +30,16 @@ function App() {
             [detection, ...prevDetections].slice(0, 20)
         );
     };
+
     const handleMotion = () => {
         setMotionEvents((prev) => prev + 1);
     };
+
+    const handleResetTest = () => {
+        setDetections([]);
+        setMotionEvents(0);
+        setResetTrigger((prev) => prev + 1);
+    }
 
     const handleTestDetection = () => {
         if (!testSoundRef.current) {
@@ -117,7 +126,9 @@ function App() {
                                 setStatus={setStatus}
                                 onDetection={handleDetection}
                                 onMotion={handleMotion}
-                                testTrigger={testTrigger}
+                                // testTrigger={testTrigger}
+                                resetTrigger={resetTrigger}
+                                sourceMode={sourceMode}
                             />
                         </div>
 
@@ -125,6 +136,9 @@ function App() {
                             status={status}
                             setStatus={setStatus}
                             onTestDetection={handleTestDetection}
+                            sourceMode={sourceMode}
+                            setSourceMode={setSourceMode}
+                            onResetTest={handleResetTest}
                         />
 
                         <section className="activity-panel">

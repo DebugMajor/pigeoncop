@@ -2,7 +2,14 @@ import { useRef, useEffect, useState } from "react";
 import StatusCard from "./StatusCard";
 import AIModel from "./AIModel";
 
-function Camera({ status, setStatus, onDetection, onMotion }) {
+function Camera({
+    status,
+    setStatus,
+    onDetection,
+    onMotion,
+    sourceMode,
+    resetTrigger,
+}) {
     const videoRef = useRef(null);
     const streamRef = useRef(null);
     const canvasRef = useRef(null);
@@ -39,6 +46,21 @@ function Camera({ status, setStatus, onDetection, onMotion }) {
     // START CAMERA
     async function startCamera() {
         try {
+            if (sourceMode === "test") {
+                if (videoRef.current) {
+                    videoRef.current.srcObject = null;
+                    videoRef.current.src = "/videos/pigeon-test.mp4";
+                    videoRef.current.loop = true;
+                    videoRef.current.muted = true;
+                    videoRef.current.currentTime = 0;
+
+                    await videoRef.current.play();
+                }
+
+                setStatus("active");
+                return;
+            }
+
             const stream =
                 await navigator.mediaDevices.getUserMedia({
                     video: true,
@@ -48,12 +70,20 @@ function Camera({ status, setStatus, onDetection, onMotion }) {
 
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
+                videoRef.current.removeAttribute("src");
+                videoRef.current.muted = false;
                 await videoRef.current.play();
             }
 
             setStatus("active");
         } catch (error) {
-            console.error("Camera error:", error);
+            console.error(
+                sourceMode === "test"
+                    ? "Test video error:"
+                    : "Camera error:",
+                error
+            );
+
             setStatus("error");
         }
     }
@@ -74,6 +104,39 @@ function Camera({ status, setStatus, onDetection, onMotion }) {
         }
     }, [status]);
 
+    // RESET TEST
+    useEffect(() => {
+        if (sourceMode !== "test" || resetTrigger === 0) {
+            return;
+        }
+
+        const video = videoRef.current;
+
+        if (!video) {
+            return;
+        }
+
+        video.currentTime = 0;
+
+        prevFrameRef.current = null;
+        consecutiveMotionFrames.current = 0;
+        consecutiveNoMotionFrames.current = 0;
+        armed.current = true;
+        lastDetectionTimeRef.current = null;
+
+        setMotionDetected(false);
+        setDetections([]);
+
+        deterrentCooldownUntilRef.current = 0;
+
+        video.play().catch((error) => {
+            console.log(
+                "Test video reset playback failed:",
+                error
+            );
+        });
+    }, [resetTrigger, sourceMode]);
+
     // STOP CAMERA
     function stopCamera() {
         if (streamRef.current != null) {
@@ -91,6 +154,15 @@ function Camera({ status, setStatus, onDetection, onMotion }) {
             videoRef.current.srcObject = null;
         }
 
+        if (videoRef.current) {
+            videoRef.current.pause();
+
+            if (sourceMode === "test") {
+                videoRef.current.removeAttribute("src");
+                videoRef.current.load();
+            }
+        }
+
         setStatus("offline");
 
         clearInterval(intervalRef.current);
@@ -105,6 +177,8 @@ function Camera({ status, setStatus, onDetection, onMotion }) {
         consecutiveNoMotionFrames.current = 0;
         armed.current = true;
         lastDetectionTimeRef.current = null;
+
+        deterrentCooldownUntilRef.current = 0;
     }
 
     // SNAPSHOT
@@ -144,6 +218,42 @@ function Camera({ status, setStatus, onDetection, onMotion }) {
         );
     }
 
+    // DETERRENT PRESENCE
+    function handleBirdPresence() {
+        const currentTime = Date.now();
+        const cooldownMs = 30000;
+
+        if (
+            currentTime <
+            deterrentCooldownUntilRef.current
+        ) {
+            return;
+        }
+
+        if (!deterrentSoundRef.current) {
+            return;
+        }
+
+        deterrentCooldownUntilRef.current =
+            currentTime + cooldownMs;
+
+        deterrentSoundRef.current.currentTime = 0;
+
+        deterrentSoundRef.current
+            .play()
+            .then(() => {
+                console.log(
+                    "Deterrent activated for confirmed pigeon."
+                );
+            })
+            .catch((error) => {
+                console.log(
+                    "Deterrent playback failed:",
+                    error
+                );
+            });
+    }
+
     // CONFIRMED DETECTION
     function handleConfirmedDetection(detection) {
         const snapshot = captureSnapshot();
@@ -153,43 +263,13 @@ function Camera({ status, setStatus, onDetection, onMotion }) {
             snapshot,
             capturedAt: snapshot ? Date.now() : null,
             deterrentStatus:
-                detection.type === "bird" ? "Triggered" : "Cooldown",
+                detection.type === "bird"
+                    ? "Triggered"
+                    : "Cooldown",
         };
 
         // Add confirmed event to application state
         onDetection(detectionWithSnapshot);
-
-        // Activate deterrent ONLY for a confirmed bird
-        if (detection.type === "bird") {
-            const currentTime = Date.now();
-            const cooldownMs = 30000;
-
-            if (currentTime < deterrentCooldownUntilRef.current) {
-                console.log("Deterrent skipped - cooldown active.");
-                return;
-            }
-
-            if (deterrentSoundRef.current) {
-                deterrentCooldownUntilRef.current =
-                    currentTime + cooldownMs;
-
-                deterrentSoundRef.current.currentTime = 0;
-
-                deterrentSoundRef.current
-                    .play()
-                    .then(() => {
-                        console.log(
-                            "Deterrent activated for confirmed pigeon."
-                        );
-                    })
-                    .catch((error) => {
-                        console.log(
-                            "Deterrent playback failed:",
-                            error
-                        );
-                    });
-            }
-        }
     }
 
     //Motion Detection
@@ -244,6 +324,7 @@ function Camera({ status, setStatus, onDetection, onMotion }) {
             currentFrame.data;
 
         const frameThreshold = 2;
+
         const totalPixels =
             currPixels.length / 4;
 
@@ -325,7 +406,8 @@ function Camera({ status, setStatus, onDetection, onMotion }) {
                     motionPercentage.toFixed(2) +
                     "%"
                 );
-                onMotion(motionPercentage)
+
+                onMotion(motionPercentage);
 
                 consecutiveMotionFrames.current = 0;
                 armed.current = false;
@@ -431,8 +513,8 @@ function Camera({ status, setStatus, onDetection, onMotion }) {
                             width: `${width}px`,
                             height: `${height}px`,
                             border: `3px solid ${isHuman
-                                ? "#00ff88"
-                                : "#00ff88"
+                                    ? "#00ff88"
+                                    : "#00ff88"
                                 }`,
                             boxSizing:
                                 "border-box",
@@ -477,20 +559,29 @@ function Camera({ status, setStatus, onDetection, onMotion }) {
             }
         );
     }
+
     //UI
     return (
         <div>
             {status === "loading" && (
                 <StatusCard
                     title="🟡 Waiting for permission"
-                    message="Waiting for user permission"
+                    message={
+                        sourceMode === "test"
+                            ? "Loading test video"
+                            : "Waiting for user permission"
+                    }
                 />
             )}
 
             {status === "error" && (
                 <StatusCard
                     title="🔴 Camera Error"
-                    message="Camera access denied. Please enable camera access from your browser settings and refresh the page."
+                    message={
+                        sourceMode === "test"
+                            ? "Test video could not be loaded."
+                            : "Camera access denied. Please enable camera access from your browser settings and refresh the page."
+                    }
                 />
             )}
 
@@ -506,14 +597,19 @@ function Camera({ status, setStatus, onDetection, onMotion }) {
             >
                 <div className="camera-header">
                     <h5 className="camera-title">
-                        Live Camera Feed
+                        {sourceMode === "test"
+                            ? "Test Video Feed"
+                            : "Live Camera Feed"}
                     </h5>
 
                     <div className="camera-line"></div>
 
                     {status === "active" && (
                         <div className="monitoring-status">
-                            🟢 MONITORING ACTIVE
+                            🟢{" "}
+                            {sourceMode === "test"
+                                ? "TEST MODE"
+                                : "MONITORING ACTIVE"}
                         </div>
                     )}
                 </div>
@@ -534,6 +630,7 @@ function Camera({ status, setStatus, onDetection, onMotion }) {
                         ref={videoRef}
                         autoPlay
                         playsInline
+                        muted={sourceMode === "test"}
                         className="d-block mx-auto videoEl"
                         style={{
                             width: "100%",
@@ -543,8 +640,7 @@ function Camera({ status, setStatus, onDetection, onMotion }) {
                                 "16 / 9",
                             objectFit: "cover",
                             display:
-                                status ===
-                                    "active"
+                                status === "active"
                                     ? "block"
                                     : "none",
                         }}
@@ -556,14 +652,16 @@ function Camera({ status, setStatus, onDetection, onMotion }) {
                 <AIModel
                     videoRef={videoRef}
                     videoReady={videoReady}
-                    motionDetected={
-                        motionDetected
-                    }
+                    motionDetected={motionDetected}
                     onDetection={
                         handleConfirmedDetection
                     }
                     onDetectionsChange={
                         setDetections
+                    }
+                    resetTrigger={resetTrigger}
+                    onBirdPresence={
+                        handleBirdPresence
                     }
                 />
 
