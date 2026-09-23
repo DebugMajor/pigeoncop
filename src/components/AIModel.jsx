@@ -520,13 +520,7 @@ function AIModel({
         );
     }
 
-    return (
-        <div>
-            <p>
-                AI Models Ready
-            </p>
-        </div>
-    );
+    return null;
 }
 
 export default AIModel;
