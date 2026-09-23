@@ -114,6 +114,11 @@ function App() {
     const [resetTrigger, setResetTrigger] = useState(0);
     const [now, setNow] = useState(new Date());
     const [sessionSeconds, setSessionSeconds] = useState(0);
+    const [performanceMetrics, setPerformanceMetrics] = useState({
+        motionMs: null,
+        inferenceMs: null,
+        effectiveFps: null,
+    });
 
     const testSoundRef = useRef(null);
     const sessionStartRef = useRef(null);
@@ -190,6 +195,13 @@ function App() {
 
     function handleDeterrent() {
         setDeterrentEvents((previous) => previous + 1);
+    }
+
+    function handlePerformanceMetrics(metrics) {
+        setPerformanceMetrics((previous) => ({
+            ...previous,
+            ...metrics,
+        }));
     }
 
     function handleStart() {
@@ -326,6 +338,7 @@ function App() {
                                     playbackAction={playbackAction}
                                     testVideoFile={testVideoFile}
                                     deterrentSoundPath={selectedSound.path}
+                                    onPerformance={handlePerformanceMetrics}
                                 />
                             </div>
 
@@ -500,7 +513,13 @@ function App() {
                                     <span className="pcdc-kicker">AI ENGINE</span>
                                     <strong>{status === "active" ? "RUNNING" : "STANDBY"}</strong>
                                 </div>
-                                <small>YOLO V3 · ONNX · WebGPU</small>
+                                <small>
+                                    YOLO V3 · ONNX · WebGPU
+                                    {performanceMetrics.inferenceMs !== null &&
+                                        ` · AI ${performanceMetrics.inferenceMs.toFixed(0)}ms`}
+                                    {performanceMetrics.effectiveFps !== null &&
+                                        ` · ${performanceMetrics.effectiveFps.toFixed(1)} FPS`}
+                                </small>
                             </div>
                         </section>
                     </aside>
