@@ -1,32 +1,11 @@
-# PigeonCop
+# PigeonCop Phase 2 — User Video Upload
 
-PigeonCop is a web-based bird deterrent system built using React and Vite.
+Run from the project root:
 
-The project uses a live camera feed to monitor an area and is being developed to detect pigeons and other birds automatically. When a bird is detected, the system will play deterrent sounds and maintain detection logs.
+```bash
+unzip -o "C:/Users/shash/Downloads/pigeoncop-phase2-video-upload-final-v3.zip"
+bash install-phase2-video.sh
+npm run dev
+```
 
-## Current Features
-
-* Live camera feed using the browser Camera API
-* Camera permission handling
-* Loading and error status cards
-* Retry option for camera access issues
-* Responsive React component structure
-
-## Tech Stack
-
-* React
-* Vite
-* Bootstrap
-* JavaScript
-
-## Planned Features
-
-* Start/Stop monitoring
-* Detection logs
-* Audio deterrent system
-* Bird detection using AI/Computer Vision
-* Detection statistics dashboard
-
-## Status
-
-This project is currently under development.
+Select SOURCE -> Test Video. Choose Video will appear.

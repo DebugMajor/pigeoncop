@@ -1,0 +1,8 @@
+/* Add this block to src/App.css if your current App.css does not contain it. */
+.deterrent-selector { display:flex; flex-direction:column; gap:7px; width:200px; }
+.deterrent-selector select { width:100%; min-height:40px; padding:0 34px 0 12px; border:1px solid rgba(255,255,255,.08); border-radius:10px; background:#0a100c; color:#dce7df; font-family:inherit; font-size:.68rem; font-weight:760; cursor:pointer; outline:none; }
+.deterrent-selector select:hover { border-color:rgba(37,217,131,.22); }
+.deterrent-selector select:focus { border-color:rgba(37,217,131,.35); box-shadow:0 0 0 3px rgba(37,217,131,.08); }
+.deterrent-selector option { background:#0b100d; color:#eef4ef; }
+@media (max-width:1020px) { .deterrent-selector { width:200px; } }
+@media (max-width:720px) { .deterrent-selector { width:100%; } }

@@ -1,0 +1,60 @@
+/* PigeonCop control-panel layout fix
+   Keeps the panel height stable when switching Live Camera <-> Test Video.
+   The extra Reset Test button stays on the same row instead of wrapping. */
+
+@media (min-width: 1021px) {
+    .control-panel {
+        grid-template-columns:
+            minmax(235px, 0.8fr)
+            minmax(330px, 1.25fr)
+            minmax(475px, 1.75fr) !important;
+        min-height: 126px;
+        box-sizing: border-box;
+    }
+
+    .control-actions {
+        min-width: 0;
+        width: 100%;
+        display: grid !important;
+        grid-template-columns: minmax(118px, 1.25fr) minmax(72px, 0.72fr) minmax(105px, 1fr) minmax(105px, 1fr);
+        align-items: center;
+        gap: 8px;
+        flex-wrap: nowrap !important;
+    }
+
+    .control-actions .action-button {
+        width: 100%;
+        min-width: 0;
+        padding-left: 9px;
+        padding-right: 9px;
+        font-size: 0.67rem;
+    }
+
+    .control-actions .action-button span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+@media (min-width: 1021px) and (max-width: 1280px) {
+    .control-panel {
+        grid-template-columns:
+            minmax(210px, 0.75fr)
+            minmax(285px, 1.15fr)
+            minmax(430px, 1.7fr) !important;
+        gap: 15px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .control-actions {
+        grid-template-columns: minmax(105px, 1.2fr) minmax(65px, 0.7fr) minmax(95px, 1fr) minmax(95px, 1fr);
+        gap: 6px;
+    }
+}
+
+@media (max-width: 1020px) {
+    .control-actions {
+        min-width: 0;
+    }
+}

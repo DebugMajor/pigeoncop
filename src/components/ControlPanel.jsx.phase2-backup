@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlay, faPause, faStop, faVolumeHigh, faRotateRight, faUpload } from "@fortawesome/free-solid-svg-icons";
+import { faPlay, faPause, faStop, faVolumeHigh, faRotateRight } from "@fortawesome/free-solid-svg-icons";
 
 function ControlPanel({
     status,
@@ -7,6 +7,8 @@ function ControlPanel({
     onTestDetection,
     sourceMode,
     setSourceMode,
+    testVideoFile,
+    onVideoSelect,
     onResetTest,
     onTogglePlayback,
     testVideoPlaying,
@@ -14,15 +16,7 @@ function ControlPanel({
     deterrentSounds,
     setDeterrentSound,
     selectedSoundLabel,
-    testVideoFile,
-    onVideoSelect,
 }) {
-    const handleVideoSelect = (event) => {
-        const file = event.target.files?.[0] ?? null;
-        if (file) onVideoSelect(file);
-        event.target.value = "";
-    };
-
     return (
         <section className="control-panel">
             <div className="control-copy">
@@ -37,24 +31,6 @@ function ControlPanel({
                     <button type="button" className={`source-option ${sourceMode === "live" ? "active" : ""}`} disabled={status === "active" || status === "loading"} onClick={() => setSourceMode("live")}>Live Camera</button>
                     <button type="button" className={`source-option ${sourceMode === "test" ? "active" : ""}`} disabled={status === "active" || status === "loading"} onClick={() => setSourceMode("test")}>Test Video</button>
                 </div>
-
-                {sourceMode === "test" && (
-                    <div className="test-video-picker">
-                        <label className="test-video-button">
-                            <FontAwesomeIcon icon={faUpload} />
-                            <span>{testVideoFile ? "Change Video" : "Choose Video"}</span>
-                            <input
-                                type="file"
-                                accept="video/*"
-                                onChange={handleVideoSelect}
-                                disabled={status === "active" || status === "loading"}
-                            />
-                        </label>
-                        <span className="test-video-name" title={testVideoFile?.name || "Built-in demo video"}>
-                            {testVideoFile ? testVideoFile.name : "Built-in demo"}
-                        </span>
-                    </div>
-                )}
             </div>
 
             <label className="deterrent-selector">

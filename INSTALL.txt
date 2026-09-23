@@ -1,0 +1,12 @@
+PigeonCop control-panel layout fix
+
+From the PigeonCop project root (Git Bash):
+
+unzip -o "C:/Users/shash/Downloads/pigeoncop-control-layout-fix.zip"
+cat App.css.patch >> src/App.css
+rm App.css.patch
+
+Then restart Vite if needed:
+npm run dev
+
+This keeps the desktop Monitoring Controls panel the same height when switching between Live Camera and Test Video. Reset Test stays on the same row instead of wrapping and increasing the panel height.
