@@ -1,0 +1,190 @@
+/* PigeonCop Dashboard V6
+   Compact single-viewport monitoring console.
+   Green-only theme. */
+
+.pcv6-dashboard{
+  --g:#28e28c;
+  --g2:#60f2ae;
+  --bg:#030a06;
+  --panel:#07140c;
+  --panel2:#091a10;
+  --line:rgba(93,205,142,.15);
+  --line2:rgba(67,238,160,.30);
+  --text:#eff8f1;
+  --muted:#7f9588;
+  --soft:#60766a;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 82% 0%,rgba(31,132,82,.12),transparent 30rem),
+    radial-gradient(circle at 18% 24%,rgba(19,89,54,.07),transparent 24rem),
+    var(--bg);
+}
+
+/* Header */
+.pcv6-dashboard .topbar{
+  background:rgba(3,10,6,.95)!important;
+  border-bottom:1px solid var(--line)!important;
+}
+.pcv6-dashboard .brand-logo{filter:drop-shadow(0 10px 24px rgba(40,226,140,.08))}
+.pcv6-dashboard .topbar-status{border-color:rgba(40,226,140,.18)!important;color:#91a79a!important}
+.pcv6-dashboard .topbar-status .session-dot.is-live{background:var(--g)!important;box-shadow:0 0 13px rgba(40,226,140,.55)}
+
+.pcv6-content{width:min(1540px,calc(100% - 48px));margin:auto;padding:14px 0 20px}
+.pcv6-titlebar{
+  min-height:61px;padding:3px 0 11px;display:flex;align-items:flex-end;justify-content:space-between;
+  gap:18px;border-bottom:1px solid var(--line);margin-bottom:11px
+}
+.pcv6-kicker{display:block;color:#637a6c;font:700 8px "DM Mono",monospace;letter-spacing:.16em;text-transform:uppercase}
+.pcv6-titlebar h1{margin:5px 0 0;color:var(--text);font-size:28px;letter-spacing:-.045em;line-height:1}
+.pcv6-title-status{display:flex;align-items:center;gap:9px;color:#84988c;font:10px "DM Mono",monospace;letter-spacing:.04em}
+.pcv6-title-status strong{color:var(--g);font-weight:500}
+.pcv6-status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:#62776a}
+.pcv6-status-dot.active{background:var(--g);box-shadow:0 0 13px rgba(40,226,140,.55)}
+.pcv6-divider{width:1px;height:17px;background:var(--line);margin:0 3px}
+.pcv6-ai-pill,.pcv6-ready-pill{display:inline-flex;align-items:center;gap:6px;color:var(--g);border:1px solid rgba(40,226,140,.17);background:rgba(40,226,140,.035);padding:6px 8px;border-radius:999px}
+.pcv6-ai-pill i,.pcv6-ready-pill i{width:5px;height:5px;border-radius:50%;display:inline-block;background:var(--g);box-shadow:0 0 8px rgba(40,226,140,.45)}
+
+.pcv6-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:13px;align-items:start}
+.pcv6-primary,.pcv6-side{min-width:0}
+
+/* Camera block */
+.pcv6-camera-shell{
+  overflow:hidden;border:1px solid var(--line2);border-radius:12px;background:#06110a;
+  box-shadow:0 22px 65px rgba(0,0,0,.28)
+}
+.pcv6-camera-top{
+  min-height:51px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--line)
+}
+.pcv6-camera-label{display:block;color:#dce9e0;font:600 10px "DM Mono",monospace;letter-spacing:.10em}
+.pcv6-camera-sub{display:block;color:#5f7467;font:8px "DM Mono",monospace;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:570px}
+.pcv6-live-badge{
+  padding:6px 9px;border:1px solid rgba(40,226,140,.18);border-radius:6px;color:var(--g);
+  background:rgba(40,226,140,.04);font:600 8px "DM Mono",monospace;letter-spacing:.12em
+}
+.pcv6-live-badge i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--g);margin-right:6px;box-shadow:0 0 8px rgba(40,226,140,.45)}
+.pcv6-camera-body{padding:6px}
+.pcv6-camera-body .card{margin:0!important;padding:0!important;border:0!important;border-radius:8px!important;background:transparent!important;box-shadow:none!important}
+.pcv6-camera-body .camera-header{display:none!important}
+.pcv6-camera-body .videoEl{
+  width:100%!important;max-width:none!important;max-height:none!important;display:block!important;
+  height:clamp(290px,42vh,390px)!important;aspect-ratio:auto!important;object-fit:cover!important;
+  border:1px solid rgba(92,198,139,.14)!important;border-radius:7px!important;background:#020603!important
+}
+.pcv6-camera-body .card>div[style*="position: relative"]{width:100%!important;max-width:none!important}
+.pcv6-camera-body .card canvas{display:none!important}
+.pcv6-camera-foot{
+  min-height:31px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--line);color:#60756a;font:8px "DM Mono",monospace;letter-spacing:.06em;text-transform:uppercase
+}
+.pcv6-camera-foot span{display:flex;align-items:center;gap:6px}
+.pcv6-camera-foot i{width:5px;height:5px;background:var(--g);border-radius:50%;box-shadow:0 0 7px rgba(40,226,140,.38)}
+
+/* Controls: directly below camera and deliberately short */
+.pcv6-controls{margin-top:8px}
+.pcv6-controls .control-panel{
+  margin:0!important;min-height:61px!important;padding:7px 10px!important;display:grid!important;
+  grid-template-columns:170px 235px 205px minmax(330px,1fr)!important;align-items:center;
+  gap:9px!important;border:1px solid var(--line)!important;border-radius:10px!important;
+  background:linear-gradient(145deg,#08170d,#061009)!important
+}
+.pcv6-controls .control-copy h2{margin:3px 0 0;font-size:12px!important;color:#e3eee6}
+.pcv6-controls .control-copy p{margin:0;font-size:8px!important;line-height:1.25;color:#607569;max-width:162px}
+.pcv6-controls .section-kicker{font-size:7px!important}
+.pcv6-controls .source-options{height:30px!important;margin-top:4px!important;border:1px solid rgba(102,191,140,.14);border-radius:7px;display:flex;overflow:hidden;background:#061009}
+.pcv6-controls .source-option{background:transparent!important;color:#63776b!important;border:0!important;font-size:8px!important;font-weight:700!important}
+.pcv6-controls .source-option.active{background:var(--g)!important;color:#031008!important}
+.pcv6-controls .test-video-picker{margin-top:4px!important;gap:5px}
+.pcv6-controls .test-video-button{min-height:23px!important;padding:0 7px!important;font-size:7px!important;border-radius:5px}
+.pcv6-controls .test-video-name{font-size:7px!important;max-width:105px}
+.pcv6-controls .deterrent-select{height:31px!important;margin-top:4px!important;padding-left:9px!important;border-radius:7px!important;background:#061009!important;border:1px solid rgba(102,191,140,.14)!important;color:#d8e8dc!important;font-size:8px!important;font-weight:700!important}
+.pcv6-controls .control-actions{display:flex!important;justify-content:flex-end!important;align-items:center!important;gap:5px!important;flex-wrap:nowrap!important}
+.pcv6-controls .action-button{min-height:31px!important;padding:0 8px!important;border-radius:7px!important;font-size:8px!important;white-space:nowrap!important}
+.pcv6-controls .action-button.action-primary{background:var(--g)!important;color:#031008!important}
+.pcv6-controls .action-button.action-secondary{background:#0c1a11!important;border-color:rgba(102,191,140,.13)!important;color:#c7d7cc!important}
+.pcv6-controls .action-button.action-tertiary{background:transparent!important;border-color:rgba(102,191,140,.13)!important;color:#96aa9d!important}
+
+/* Right dashboard intentionally stays shorter than camera+controls */
+.pcv6-side{display:grid;gap:9px;align-content:start}
+.pcv6-panel{border:1px solid var(--line);border-radius:10px;background:linear-gradient(145deg,#08150d,#061009);overflow:hidden}
+.pcv6-panel-head{min-height:48px;padding:10px 12px;display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1px solid var(--line)}
+.pcv6-panel-head h2{margin:4px 0 0;color:#e6f0e8;font-size:15px;letter-spacing:-.03em}
+.pcv6-live-session{padding-top:3px;color:var(--g);font:8px "DM Mono",monospace}
+.pcv6-empty{min-height:98px;padding:16px;display:flex;align-items:center;gap:10px}
+.pcv6-empty-icon{width:30px;height:30px;display:grid;place-items:center;border:1px solid rgba(40,226,140,.16);border-radius:8px;color:var(--g)}
+.pcv6-empty strong,.pcv6-empty span{display:block}.pcv6-empty strong{font-size:11px}.pcv6-empty span{margin-top:4px;color:#607569;font-size:9px}
+.pcv6-recent-list{display:grid}
+.pcv6-recent-item{display:grid;grid-template-columns:53px minmax(0,1fr);gap:8px;padding:9px 11px;border-top:1px solid rgba(102,191,140,.08)}
+.pcv6-thumb{width:53px;height:48px;border:1px solid rgba(40,226,140,.14);border-radius:5px;overflow:hidden;background:#0b1a11}
+.pcv6-thumb img{width:100%;height:100%;object-fit:cover;display:block}.pcv6-thumb>div{height:100%;display:grid;place-items:center;color:var(--g);font:700 17px "DM Mono",monospace}
+.pcv6-recent-info{display:flex;flex-direction:column;justify-content:center;min-width:0}.pcv6-recent-info strong{font-size:12px}.pcv6-recent-info span{margin-top:2px;color:#718579;font-size:9px}.pcv6-recent-info small{margin-top:2px;color:#53685b;font:8px "DM Mono",monospace}
+.pcv6-event-badge{
+  grid-column:2;justify-self:start;margin-top:-1px;padding:3px 5px;border-radius:4px;
+  border:1px solid rgba(40,226,140,.14);background:rgba(40,226,140,.035);color:var(--g);
+  font:700 6px "DM Mono",monospace;letter-spacing:.06em;text-transform:uppercase
+}
+
+/* Compact right-side dashboard: no giant telemetry cards */
+.pcv6-session-panel{overflow:hidden}
+.pcv6-ready-pill{font:700 7px "DM Mono",monospace;padding:5px 7px;letter-spacing:.08em}
+.pcv6-metric-grid{display:grid;grid-template-columns:1fr 1fr}
+.pcv6-metric{min-height:68px;padding:10px 11px;border-top:1px solid rgba(102,191,140,.08);border-right:1px solid rgba(102,191,140,.08)}
+.pcv6-metric:nth-child(2n){border-right:0}
+.pcv6-metric span,.pcv6-metric strong,.pcv6-metric small{display:block}
+.pcv6-metric span{color:#607569;font:7px "DM Mono",monospace;letter-spacing:.10em}
+.pcv6-metric strong{margin-top:6px;color:#edf6ef;font:700 16px "DM Mono",monospace;line-height:1}
+.pcv6-metric small{margin-top:4px;color:#53685b;font-size:7px}
+.pcv6-engine-row{padding:9px 11px;border-top:1px solid rgba(102,191,140,.08);display:grid;grid-template-columns:auto auto;gap:3px 8px}
+.pcv6-engine-row span{color:#718579;font:7px "DM Mono",monospace;letter-spacing:.09em}.pcv6-engine-row span i{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--g);margin-right:5px;box-shadow:0 0 8px rgba(40,226,140,.4)}
+.pcv6-engine-row strong{justify-self:end;color:var(--g);font:700 8px "DM Mono",monospace}.pcv6-engine-row small{grid-column:1/-1;color:#52685a;font:7px "DM Mono",monospace}
+
+/* Activity remains below the compact single-viewport zone */
+.pcv6-activity{margin-top:8px}
+.pcv6-activity .logs-container{padding:8px 10px 10px;min-height:88px}
+.pcv6-activity .empty-state{min-height:80px;border-color:rgba(102,191,140,.08);background:rgba(255,255,255,.008)}
+.pcv6-activity .log-list{gap:6px}
+.pcv6-activity .log-row{grid-template-columns:6px minmax(0,1fr) 130px;padding:8px;border-color:rgba(102,191,140,.06);background:#07130c;border-radius:7px}
+.pcv6-activity .log-main strong{font-size:11px}.pcv6-activity .log-main span{font-size:8px;color:#587064}
+
+.pcv6-dashboard .footer{width:min(1540px,calc(100% - 48px));margin:auto;border-top-color:var(--line);color:#52675b}
+
+/* Laptop-height optimization: keep complete camera + controls + side dashboard on screen */
+@media (max-height: 820px) and (min-width: 1000px){
+  .pcv6-content{padding-top:9px!important}
+  .pcv6-titlebar{min-height:52px;padding-bottom:8px;margin-bottom:8px}
+  .pcv6-titlebar h1{font-size:25px}
+  .pcv6-camera-top{min-height:45px}
+  .pcv6-camera-body{padding:5px}
+  .pcv6-camera-body .videoEl{height:clamp(255px,37vh,335px)!important}
+  .pcv6-camera-foot{min-height:27px}
+  .pcv6-controls .control-panel{min-height:57px!important}
+  .pcv6-controls .action-button{min-height:29px!important}
+}
+
+/* Larger monitors: a little taller without causing a scroll-heavy layout */
+@media (min-height: 821px) and (min-width: 1000px){
+  .pcv6-camera-body .videoEl{height:clamp(300px,40vh,385px)!important}
+}
+
+@media (max-width: 1050px){
+  .pcv6-content{width:calc(100% - 32px)}
+  .pcv6-grid{grid-template-columns:1fr}
+  .pcv6-side{grid-template-columns:1fr 1fr;align-items:start}
+  .pcv6-controls .control-panel{grid-template-columns:155px 1fr 200px!important}
+  .pcv6-controls .control-copy{grid-column:1}
+  .pcv6-controls .source-selector{grid-column:2}
+  .pcv6-controls .deterrent-selector{grid-column:3}
+  .pcv6-controls .control-actions{grid-column:1/-1}
+}
+@media (max-width: 760px){
+  .pcv6-content{width:calc(100% - 24px);padding-top:10px}
+  .pcv6-titlebar{align-items:flex-start;flex-direction:column;gap:8px}
+  .pcv6-title-status{flex-wrap:wrap}
+  .pcv6-grid{grid-template-columns:1fr}
+  .pcv6-side{display:block}
+  .pcv6-session-panel{margin-top:8px}
+  .pcv6-camera-body .videoEl{height:auto!important;aspect-ratio:16/9!important}
+  .pcv6-controls .control-panel{display:flex!important;flex-direction:column!important;align-items:stretch!important}
+  .pcv6-controls .control-actions{width:100%;flex-wrap:wrap!important}
+  .pcv6-controls .action-button{flex:1 1 120px}
+}

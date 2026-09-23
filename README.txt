@@ -1,19 +1,22 @@
-PigeonCop — Deterrent Sound Selection Feature
+PigeonCop — Stitch Homepage Installer
 
-This feature pack adds:
-- Soothing Rock (existing sound; keep motion-feedback-soothing-rock.wav in public/sounds/)
-- Loud Alert (synthetic non-speech alert)
-- High Frequency (synthetic audible high-frequency alert)
-- A themed dropdown in Monitoring Controls
-- Test Sound uses the currently selected sound
-- Automatic bird deterrence uses the currently selected sound
-- Existing 30-second deterrent cooldown remains unchanged
+Run this installer from the PigeonCop project root.
 
-INSTALL
-1. Unzip this package into the PigeonCop project root.
-2. Append App.css.append to src/App.css (or copy its 10 lines into App.css).
-3. Keep your existing public/sounds/motion-feedback-soothing-rock.wav file.
-4. Run npm run dev and test all three sounds.
+1. Extract this ZIP into your PigeonCop folder or keep the extracted folder beside it.
+2. From the PigeonCop root run:
+   python pigeoncop-stitch-homepage-v1/install-stitch-homepage.py
+3. Then:
+   npm run dev
 
-NEXT PHASE
-The upload-your-own-video assessment mode should be implemented separately after this sound-selection feature is verified. The intended flow is: Test Video -> Built-in Demo / Upload Video -> video preview -> same motion/AI/detection pipeline -> metrics and event log.
+What it adds:
+- Stitch-inspired PigeonCop landing page
+- TEST NOW -> existing monitoring dashboard
+- GitHub CTA
+- How it works
+- System pipeline overview
+- Capabilities
+- Technology section
+- Dashboard HOME button
+
+It does NOT replace Camera, ControlPanel, AIModel, detection logic, Test Video, or sound logic.
+A timestamped backup of App.jsx is created before patching.

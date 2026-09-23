@@ -1,0 +1,155 @@
+/* PigeonCop Dashboard V5
+   Compact monitoring viewport + stronger green-only control presentation.
+   This file intentionally contains overrides only. */
+
+.pcv4-dashboard {
+    --pcv4-bg: #030a06;
+    --pcv4-panel: #07130c;
+    --pcv4-panel2: #0a1810;
+    --pcv4-panel3: #0d1e14;
+    --pcv4-line: rgba(95, 206, 145, 0.14);
+    --pcv4-line-strong: rgba(67, 239, 163, 0.30);
+    --pcv4-text: #eef8f0;
+    --pcv4-muted: #7f9588;
+    --pcv4-green: #24e58b;
+    --pcv4-green2: #62f3b0;
+}
+
+.pcv4-dashboard .topbar,
+.pcv4-dashboard .pcv4-titlebar {
+    background: rgba(3, 10, 6, 0.94) !important;
+}
+
+.pcv4-content {
+    padding-top: 17px !important;
+    padding-bottom: 22px !important;
+}
+
+/* Make the main monitor substantially shorter so controls remain visible. */
+.pcv4-camera-body {
+    padding: 7px !important;
+}
+
+.pcv4-camera-body .videoEl {
+    height: clamp(300px, 42vh, 400px) !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    width: 100% !important;
+    aspect-ratio: auto !important;
+    object-fit: cover !important;
+}
+
+/* Reduce the vertical overhead around the camera. */
+.pcv4-camera-top {
+    min-height: 55px !important;
+    padding: 0 15px !important;
+}
+
+.pcv4-camera-foot {
+    min-height: 31px !important;
+    font-size: 8px !important;
+}
+
+/* Keep controls directly attached to the monitor and compact. */
+.pcv4-controls {
+    margin-top: 8px !important;
+}
+
+.pcv4-controls .control-panel {
+    min-height: 64px !important;
+    padding: 8px 10px !important;
+    gap: 9px !important;
+    grid-template-columns: 175px 250px 215px minmax(290px, 1fr) !important;
+}
+
+.pcv4-controls .control-copy h2 {
+    font-size: 12px !important;
+}
+
+.pcv4-controls .control-copy p {
+    max-width: 170px !important;
+    font-size: 8px !important;
+}
+
+.pcv4-controls .source-options,
+.pcv4-controls .deterrent-select {
+    height: 32px !important;
+}
+
+.pcv4-controls .action-button {
+    min-height: 32px !important;
+    font-size: 8px !important;
+    padding: 0 8px !important;
+}
+
+/* Hide redundant "Current Run" panel — telemetry already covers these values. */
+.pcv4-session {
+    display: none !important;
+}
+
+/* Tighter right-side stack. */
+.pcv4-side {
+    gap: 10px !important;
+}
+
+.pcv4-panel-head {
+    min-height: 56px !important;
+    padding: 11px 14px !important;
+}
+
+.pcv4-recent-item {
+    padding: 9px 12px !important;
+}
+
+/* Stronger green visual hierarchy. */
+.pcv4-live-badge,
+.pcv4-live-session,
+.pcv4-title-status strong,
+.pcv4-about span {
+    color: var(--pcv4-green) !important;
+}
+
+.pcv4-action-danger {
+    background: linear-gradient(145deg, #20d87e, #16b96b) !important;
+    border-color: rgba(87, 255, 176, 0.24) !important;
+    color: #021009 !important;
+    box-shadow: 0 10px 26px rgba(29, 216, 126, 0.10) !important;
+}
+
+.pcv4-action-danger .pcv2-action-icon,
+.pcv4-action-danger .pcv4-action-icon {
+    background: rgba(0, 30, 15, 0.10) !important;
+}
+
+/* Make the monitoring page slightly denser at common laptop sizes. */
+@media (max-height: 820px) and (min-width: 1051px) {
+    .pcv4-camera-body .videoEl {
+        height: clamp(285px, 37vh, 350px) !important;
+    }
+    .pcv4-content {
+        padding-top: 12px !important;
+    }
+    .pcv4-titlebar {
+        padding-bottom: 13px !important;
+        margin-bottom: 12px !important;
+    }
+}
+
+@media (max-width: 1050px) {
+    .pcv4-controls .control-panel {
+        grid-template-columns: 160px 1fr 205px !important;
+    }
+    .pcv4-camera-body .videoEl {
+        height: clamp(280px, 43vh, 380px) !important;
+    }
+}
+
+@media (max-width: 760px) {
+    .pcv4-camera-body .videoEl {
+        height: auto !important;
+        aspect-ratio: 16 / 9 !important;
+    }
+    .pcv4-controls .control-panel {
+        display: flex !important;
+    }
+}

@@ -1,0 +1,1 @@
+PigeonCop UI final: separate landing page + /monitor dashboard. Run installer from project root, then npm run dev.

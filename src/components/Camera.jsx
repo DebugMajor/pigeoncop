@@ -24,7 +24,12 @@ function Camera({
 
     useEffect(() => {
         if (!deterrentSoundPath) return;
-        if (deterrentSoundRef.current) deterrentSoundRef.current.pause();
+
+        if (deterrentSoundRef.current) {
+            deterrentSoundRef.current.pause();
+            deterrentSoundRef.current.currentTime = 0;
+        }
+
         const audio = new Audio(deterrentSoundPath);
         audio.preload = "auto";
         deterrentSoundRef.current = audio;
@@ -71,15 +76,21 @@ function Camera({
 
     useEffect(() => {
         if (sourceMode !== "test" || playbackCommand === 0 || !videoRef.current) return;
-        if (playbackAction === "play") videoRef.current.play().catch(console.log); else videoRef.current.pause();
+        if (playbackAction === "play") {
+            videoRef.current.play().catch(console.log);
+        } else {
+            videoRef.current.pause();
+            stopDeterrentSound();
+        }
     }, [playbackCommand, playbackAction, sourceMode]);
 
     useEffect(() => {
         if (sourceMode !== "test" || resetTrigger === 0 || !videoRef.current) return;
-        videoRef.current.currentTime = 0; prevFrameRef.current = null; consecutiveMotionFrames.current = 0; consecutiveNoMotionFrames.current = 0; armed.current = true; lastDetectionTimeRef.current = null; deterrentCooldownUntilRef.current = 0; setMotionDetected(false); setDetections([]); videoRef.current.play().catch(console.log);
+        stopDeterrentSound(); videoRef.current.currentTime = 0; prevFrameRef.current = null; consecutiveMotionFrames.current = 0; consecutiveNoMotionFrames.current = 0; armed.current = true; lastDetectionTimeRef.current = null; deterrentCooldownUntilRef.current = 0; setMotionDetected(false); setDetections([]); videoRef.current.play().catch(console.log);
     }, [resetTrigger, sourceMode]);
 
     function stopCamera() {
+        stopDeterrentSound();
         if (streamRef.current) {
             streamRef.current.getTracks().forEach((track) => track.stop());
             streamRef.current = null;
@@ -123,6 +134,13 @@ function Camera({
         canvas.width = video.videoWidth; canvas.height = video.videoHeight;
         const context = canvas.getContext("2d"); if (!context) return null;
         context.drawImage(video, 0, 0, canvas.width, canvas.height); return canvas.toDataURL("image/jpeg", 0.85);
+    }
+
+    function stopDeterrentSound() {
+        if (deterrentSoundRef.current) {
+            deterrentSoundRef.current.pause();
+            deterrentSoundRef.current.currentTime = 0;
+        }
     }
 
     function handleBirdPresence() {

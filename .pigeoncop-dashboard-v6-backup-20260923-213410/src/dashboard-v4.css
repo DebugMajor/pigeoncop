@@ -1,0 +1,158 @@
+/* =========================================================
+   PigeonCop Dashboard V4 — compact green monitoring console
+   No sidebar, no redundant stats wall, controls stay under camera.
+   ========================================================= */
+
+.pcv4-dashboard{
+  --pcv4-bg:#040b07;
+  --pcv4-panel:#09130e;
+  --pcv4-panel2:#0c1812;
+  --pcv4-panel3:#102017;
+  --pcv4-line:rgba(133,194,163,.15);
+  --pcv4-line-strong:rgba(76,238,164,.30);
+  --pcv4-text:#eef6f0;
+  --pcv4-muted:#7c9185;
+  --pcv4-soft:#5e7166;
+  --pcv4-green:#27df8a;
+  --pcv4-green2:#5ff2ae;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 82% 0%,rgba(35,142,88,.13),transparent 29rem),
+    radial-gradient(circle at 13% 33%,rgba(25,103,65,.08),transparent 25rem),
+    var(--pcv4-bg);
+}
+.pcv4-dashboard .topbar{
+  border-bottom:1px solid var(--pcv4-line)!important;
+  background:rgba(4,11,7,.92)!important;
+}
+.pcv4-dashboard .topbar-inner{min-height:78px}
+.pcv4-dashboard .brand-logo{filter:drop-shadow(0 10px 25px rgba(39,223,138,.08))}
+.pcv4-dashboard .topbar-status{border-color:rgba(39,223,138,.18);color:#89a096}
+.pcv4-dashboard .topbar-status .session-dot.is-live{background:var(--pcv4-green);box-shadow:0 0 15px rgba(39,223,138,.5)}
+
+.pcv4-content{width:min(1520px,calc(100% - 54px));margin:auto;padding:24px 0 32px}
+.pcv4-titlebar{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;padding:5px 0 20px;border-bottom:1px solid var(--pcv4-line);margin-bottom:18px}
+.pcv4-titlebar h1{margin:5px 0 0;font-size:30px;letter-spacing:-.045em;color:var(--pcv4-text)}
+.pcv4-kicker{display:block;color:#63796c;font:700 9px "DM Mono",monospace;letter-spacing:.15em;text-transform:uppercase}
+.pcv4-title-status{display:flex;align-items:center;gap:10px;color:#889a91;font:11px "DM Mono",monospace;letter-spacing:.05em}
+.pcv4-title-status strong{color:var(--pcv4-green);font-weight:500}
+.pcv4-status-dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#66786d}
+.pcv4-status-dot.active{background:var(--pcv4-green);box-shadow:0 0 14px rgba(39,223,138,.55)}
+.pcv4-divider{width:1px;height:18px;background:var(--pcv4-line);margin:0 6px}
+
+.pcv4-grid{display:grid;grid-template-columns:minmax(0,1fr) 335px;gap:17px;align-items:start}
+.pcv4-primary,.pcv4-side{min-width:0}
+.pcv4-camera-shell{
+  overflow:hidden;border:1px solid var(--pcv4-line-strong);border-radius:13px;
+  background:linear-gradient(145deg,#09140e,#050b07);
+  box-shadow:0 25px 75px rgba(0,0,0,.30)
+}
+.pcv4-camera-top{min-height:63px;padding:0 17px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--pcv4-line)}
+.pcv4-camera-label{display:block;color:#dce9e0;font:600 11px "DM Mono",monospace;letter-spacing:.10em}
+.pcv4-camera-sub{display:block;color:#5e7167;font:9px "DM Mono",monospace;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:520px}
+.pcv4-live-badge{padding:7px 10px;border-radius:6px;border:1px solid rgba(39,223,138,.16);background:rgba(39,223,138,.05);color:var(--pcv4-green);font:600 9px "DM Mono",monospace;letter-spacing:.12em}
+.pcv4-live-badge i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;background:var(--pcv4-green);box-shadow:0 0 10px rgba(39,223,138,.5)}
+.pcv4-camera-body{padding:9px}
+.pcv4-camera-body .card{margin:0!important;padding:0!important;border:0!important;border-radius:9px!important;background:transparent!important;box-shadow:none!important}
+.pcv4-camera-body .camera-header{display:none!important}
+.pcv4-camera-body .videoEl{
+  width:100%!important;max-width:none!important;max-height:none!important;display:block!important;
+  aspect-ratio:16/9;object-fit:cover!important;border-radius:9px!important;border:1px solid rgba(132,183,153,.14)!important;background:#020603!important
+}
+.pcv4-camera-body .card>div[style*="position: relative"]{max-width:none!important;width:100%!important}
+.pcv4-camera-body .card canvas{display:none!important}
+.pcv4-camera-body .card>p{color:#6c8174!important}
+.pcv4-camera-foot{min-height:38px;padding:0 17px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--pcv4-line);color:#66796f;font:9px "DM Mono",monospace;letter-spacing:.06em;text-transform:uppercase}
+.pcv4-camera-foot span{display:flex;align-items:center;gap:7px}
+.pcv4-camera-foot i{width:6px;height:6px;border-radius:50%;background:var(--pcv4-green);box-shadow:0 0 8px rgba(39,223,138,.4)}
+
+.pcv4-controls{margin-top:11px}
+.pcv4-controls .control-panel{
+  margin:0!important;
+  min-height:72px;
+  padding:11px 13px!important;
+  display:grid!important;
+  grid-template-columns:190px 265px 245px minmax(310px,1fr);
+  align-items:center;
+  gap:12px;
+  border:1px solid var(--pcv4-line)!important;
+  border-radius:11px!important;
+  background:linear-gradient(145deg,#0a1710,#07100b)!important
+}
+.pcv4-controls .control-copy{min-width:0}
+.pcv4-controls .control-copy h2{font-size:13px;margin:4px 0 0;color:#e4eee7}
+.pcv4-controls .control-copy p{font-size:9px;line-height:1.35;color:#62766b}
+.pcv4-controls .source-selector,.pcv4-controls .deterrent-selector{min-width:0}
+.pcv4-controls .section-kicker{font-size:8px}
+.pcv4-controls .source-options{height:34px;margin-top:5px;border:1px solid rgba(132,183,153,.14);border-radius:8px;display:flex;overflow:hidden;background:#07100b}
+.pcv4-controls .source-option{
+  flex:1;border:0!important;background:transparent!important;color:#64766c!important;font-size:9px!important;font-weight:700!important
+}
+.pcv4-controls .source-option.active{background:var(--pcv4-green)!important;color:#031008!important}
+.pcv4-controls .test-video-picker{gap:6px;margin-top:5px}
+.pcv4-controls .test-video-button{min-height:25px;padding:0 8px;font-size:8px;border-radius:6px}
+.pcv4-controls .test-video-name{max-width:125px;font-size:8px}
+.pcv4-controls .deterrent-select{width:100%;height:35px;margin-top:5px;padding:0 30px 0 10px;border:1px solid rgba(132,183,153,.14);border-radius:8px;background:#07100b;color:#dae8df;font-size:9px;font-weight:700}
+.pcv4-controls .control-actions{display:flex!important;justify-content:flex-end!important;align-items:center!important;gap:6px!important;flex-wrap:nowrap!important}
+.pcv4-controls .action-button{
+  min-height:35px!important;padding:0 10px!important;border-radius:8px!important;font-size:9px!important;white-space:nowrap
+}
+.pcv4-controls .action-button span{min-width:0}
+.pcv4-controls .action-button.action-primary{background:var(--pcv4-green)!important;color:#031008!important}
+.pcv4-controls .action-button.action-secondary{background:#0d1a12!important;border-color:rgba(132,183,153,.13)!important;color:#c8d8ce!important}
+.pcv4-controls .action-button.action-tertiary{background:transparent!important;border-color:rgba(132,183,153,.12)!important;color:#98aa9f!important}
+
+.pcv4-panel{border:1px solid var(--pcv4-line);border-radius:11px;background:linear-gradient(145deg,#0a1510,#07100c);overflow:hidden}
+.pcv4-panel-head{min-height:62px;padding:13px 15px;display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1px solid var(--pcv4-line)}
+.pcv4-panel-head h2{margin:4px 0 0;color:#e7f0e9;font-size:17px;letter-spacing:-.03em}
+.pcv4-live-session{color:var(--pcv4-green);font:9px "DM Mono",monospace;padding-top:4px}
+.pcv4-count{min-width:28px;height:26px;display:grid;place-items:center;border:1px solid rgba(132,183,153,.13);border-radius:999px;color:#789086;font-size:9px}
+.pcv4-recent-empty,.pcv4-empty{min-height:117px;padding:18px;display:flex;align-items:center;gap:11px}
+.pcv4-empty-icon{width:33px;height:33px;display:grid;place-items:center;border:1px solid rgba(39,223,138,.16);border-radius:8px;color:var(--pcv4-green)}
+.pcv4-empty strong,.pcv4-empty span{display:block}.pcv4-empty strong{font-size:12px}.pcv4-empty span{margin-top:4px;color:#64776b;font-size:10px}
+.pcv4-recent-list{display:grid}
+.pcv4-recent-item{position:relative;display:grid;grid-template-columns:67px minmax(0,1fr);gap:10px;padding:11px 13px;border-top:1px solid rgba(132,183,153,.08)}
+.pcv4-thumb{width:67px;height:58px;border:1px solid rgba(39,223,138,.15);border-radius:6px;overflow:hidden;background:#0b1710}
+.pcv4-thumb img{width:100%;height:100%;object-fit:cover;display:block}.pcv4-thumb-placeholder{height:100%;display:grid;place-items:center;color:var(--pcv4-green);font:700 20px "DM Mono",monospace;background:radial-gradient(circle,rgba(39,223,138,.14),transparent 60%)}
+.pcv4-recent-info{min-width:0;display:flex;flex-direction:column;justify-content:center}.pcv4-recent-info strong{font-size:13px}.pcv4-recent-info span{margin-top:3px;color:#7b8f84;font-size:10px}.pcv4-recent-info small{margin-top:3px;color:#586b60;font:9px "DM Mono",monospace}
+.pcv4-event-badge{grid-column:2;justify-self:start;margin-top:-2px;padding:4px 6px;border:1px solid rgba(39,223,138,.16);border-radius:5px;color:var(--pcv4-green);background:rgba(39,223,138,.05);font:700 7px "DM Mono",monospace;letter-spacing:.07em;text-transform:uppercase}
+.pcv4-side{display:grid;gap:13px}
+.pcv4-telemetry-grid{display:grid;gap:9px;padding:9px}
+.pcv4-telemetry-grid .telemetry-card{min-height:118px;padding:14px;border-radius:8px;border-color:rgba(132,183,153,.10);background:#09140e}
+.pcv4-telemetry-grid .telemetry-featured{background:linear-gradient(145deg,#0c2015,#09140e);border-color:rgba(39,223,138,.18)}
+.pcv4-telemetry-grid .telemetry-value{font-size:2rem;margin-top:15px}
+.pcv4-telemetry-grid .telemetry-word{font-size:1.25rem;margin-top:15px}
+.pcv4-telemetry-grid .telemetry-card p{font-size:9px;color:#5e7267;line-height:1.45}
+.pcv4-session-grid{display:grid;grid-template-columns:1fr 1fr}
+.pcv4-session-grid div{padding:14px 15px;border-top:1px solid rgba(132,183,153,.08);border-right:1px solid rgba(132,183,153,.08)}
+.pcv4-session-grid div:nth-child(2n){border-right:0}.pcv4-session-grid strong{display:block;color:#e9f2eb;font:700 18px "DM Mono",monospace}.pcv4-session-grid span{display:block;margin-top:5px;color:#60746a;font:8px "DM Mono",monospace;letter-spacing:.08em}
+.pcv4-activity-panel{margin-top:11px}.pcv4-activity-panel .logs-container{padding:10px 13px 13px;min-height:100px}.pcv4-activity-panel .empty-state{min-height:95px;border-color:rgba(132,183,153,.09);background:rgba(255,255,255,.01)}
+.pcv4-activity-panel .log-list{gap:7px}.pcv4-activity-panel .log-row{grid-template-columns:7px minmax(0,1fr) 150px;padding:10px;border-color:rgba(132,183,153,.08);background:#09140e;border-radius:8px}
+.pcv4-activity-panel .log-main strong{font-size:12px}.pcv4-activity-panel .log-main span{font-size:9px;color:#60736a}.pcv4-activity-panel .log-detail{max-width:100%}
+.pcv4-about{padding:19px 1px 2px}.pcv4-about span{color:#789087;font:700 9px "DM Mono",monospace;letter-spacing:.15em}.pcv4-about p{margin:6px 0 0;color:#53665c;font-size:10px}
+.pcv4-dashboard .footer{width:min(1520px,calc(100% - 54px));margin:auto;border-top-color:var(--pcv4-line);color:#5b6f65}
+
+@media(max-width:1250px){
+  .pcv4-grid{grid-template-columns:minmax(0,1fr) 300px}
+  .pcv4-controls .control-panel{grid-template-columns:180px 230px 210px minmax(290px,1fr)}
+  .pcv4-controls .action-button{padding:0 8px!important}
+}
+@media(max-width:1050px){
+  .pcv4-grid{grid-template-columns:1fr}
+  .pcv4-side{grid-template-columns:1fr 1fr;align-items:start}
+  .pcv4-controls .control-panel{grid-template-columns:170px 1fr 220px;grid-template-areas:"copy source actions" "copy sound actions";align-items:center}
+  .pcv4-controls .control-copy{grid-area:copy}
+  .pcv4-controls .source-selector{grid-area:source}
+  .pcv4-controls .deterrent-selector{grid-area:sound}
+  .pcv4-controls .control-actions{grid-area:actions;flex-direction:column!important;align-items:stretch!important}
+  .pcv4-controls .action-button{width:100%}
+}
+@media(max-width:760px){
+  .pcv4-content{width:calc(100% - 26px);padding-top:16px}
+  .pcv4-titlebar{align-items:flex-start;flex-direction:column}.pcv4-title-status{flex-wrap:wrap}
+  .pcv4-side{display:block}.pcv4-session{margin-top:13px}
+  .pcv4-controls .control-panel{display:flex!important;flex-direction:column!important;align-items:stretch!important}
+  .pcv4-controls .control-actions{width:100%;flex-wrap:wrap!important;flex-direction:row!important}
+  .pcv4-controls .action-button{flex:1 1 130px}
+  .pcv4-camera-foot{gap:10px;justify-content:flex-start;flex-wrap:wrap;padding-block:8px}
+}

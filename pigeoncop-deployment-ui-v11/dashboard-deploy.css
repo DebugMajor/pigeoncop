@@ -1,0 +1,1036 @@
+/* =========================================================
+   PigeonCop Deployment UI V11
+   Clean, green-only, viewport-first monitoring console.
+   ========================================================= */
+
+:root {
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+html:has(.pcd-app),
+body:has(.pcd-app),
+#root:has(.pcd-app) {
+    width: 100%;
+    min-height: 100%;
+}
+
+html:has(.pcd-app),
+body:has(.pcd-app) {
+    margin: 0;
+    overflow: hidden;
+    background: #020805;
+}
+
+#root:has(.pcd-app) {
+    height: 100vh;
+}
+
+.pcd-app {
+    --green: #28e58c;
+    --green-2: #61f0ae;
+    --green-dim: rgba(40, 229, 140, .11);
+    --line: rgba(90, 195, 130, .14);
+    --line-strong: rgba(40, 229, 140, .27);
+    --bg: #020805;
+    --panel: #06110a;
+    --panel-2: #08150d;
+    --text: #edf7ef;
+    --muted: #788f81;
+    height: 100vh;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    color: var(--text);
+    background:
+        radial-gradient(circle at 82% 0%, rgba(27, 130, 78, .10), transparent 30rem),
+        linear-gradient(180deg, #030b06 0%, var(--bg) 100%);
+}
+
+.pcd-app *, .pcd-app *::before, .pcd-app *::after {
+    box-sizing: border-box;
+}
+
+.pcd-app button,
+.pcd-app input,
+.pcd-app select {
+    font: inherit;
+}
+
+/* Header */
+.pcd-header {
+    flex: 0 0 70px;
+    height: 70px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(2, 8, 5, .96);
+}
+
+.pcd-header-inner {
+    width: min(1600px, calc(100% - 42px));
+    height: 100%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.pcd-brand {
+    flex: 0 0 auto;
+    width: 182px;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.pcd-brand img {
+    display: block;
+    width: 175px;
+    height: auto;
+}
+
+.pcd-brand-context {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: #71877a;
+    font: 600 10px "DM Mono", monospace;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+}
+
+.pcd-brand-context span:first-child {
+    color: var(--green);
+}
+
+.pcd-brand-context i {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #4e6558;
+}
+
+.pcd-header-status {
+    margin-left: auto;
+    min-height: 38px;
+    padding: 0 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(40, 229, 140, .16);
+    border-radius: 999px;
+    color: var(--green);
+    background: rgba(40, 229, 140, .025);
+    font: 600 9px "DM Mono", monospace;
+    letter-spacing: .12em;
+}
+
+.pcd-header-status i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 12px rgba(40, 229, 140, .58);
+}
+
+/* Main */
+.pcd-main {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: min(1600px, calc(100% - 42px));
+    margin: auto;
+    padding: 8px 0 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.pcd-titlebar {
+    flex: 0 0 52px;
+    min-height: 52px;
+    margin-bottom: 8px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.pcd-kicker {
+    display: block;
+    color: #5e7568;
+    font: 700 8px "DM Mono", monospace;
+    letter-spacing: .17em;
+    text-transform: uppercase;
+}
+
+.pcd-titlebar h1 {
+    margin: 4px 0 0;
+    font-size: 25px;
+    line-height: 1;
+    letter-spacing: -.045em;
+}
+
+.pcd-live-meta {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #6e8478;
+    font: 9px "DM Mono", monospace;
+}
+
+.pcd-state, .pcd-ai {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 27px;
+    padding: 0 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(110, 132, 119, .13);
+    background: rgba(255, 255, 255, .01);
+}
+
+.pcd-state.active {
+    color: var(--green);
+    border-color: rgba(40, 229, 140, .16);
+}
+
+.pcd-state i, .pcd-ai i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #667a6e;
+}
+
+.pcd-state.active i, .pcd-ai i {
+    background: var(--green);
+    box-shadow: 0 0 9px rgba(40, 229, 140, .48);
+}
+
+.pcd-ai {
+    color: var(--green);
+    border-color: rgba(40, 229, 140, .16);
+}
+
+/* Workspace */
+.pcd-workspace {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 11px;
+}
+
+.pcd-left {
+    min-height: 0;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) 69px 78px;
+    gap: 7px;
+}
+
+.pcd-right {
+    min-height: 0;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 10px;
+}
+
+/* Camera */
+.pcd-camera {
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    background: linear-gradient(145deg, #07140c, #040b07);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .24);
+}
+
+.pcd-camera-head {
+    flex: 0 0 46px;
+    min-height: 46px;
+    padding: 0 13px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pcd-camera-title {
+    display: block;
+    color: #dbeae0;
+    font: 600 10px "DM Mono", monospace;
+    letter-spacing: .1em;
+}
+
+.pcd-camera-source {
+    display: block;
+    margin-top: 3px;
+    color: #5b7264;
+    font: 7px "DM Mono", monospace;
+    max-width: 560px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pcd-live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 9px;
+    border: 1px solid rgba(40, 229, 140, .17);
+    border-radius: 6px;
+    color: var(--green);
+    background: rgba(40, 229, 140, .03);
+    font: 600 8px "DM Mono", monospace;
+    letter-spacing: .1em;
+}
+
+.pcd-live-badge i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 9px rgba(40, 229, 140, .48);
+}
+
+.pcd-camera-frame {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 5px;
+    overflow: hidden;
+}
+
+.pcd-camera-frame .card {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 7px !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.pcd-camera-frame .videoEl {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    max-height: none !important;
+    aspect-ratio: auto !important;
+    object-fit: cover !important;
+    border-radius: 7px !important;
+    border: 1px solid rgba(88, 181, 123, .12) !important;
+    background: #010402 !important;
+}
+
+.pcd-camera-frame .camera-header,
+.pcd-camera-frame canvas {
+    display: none !important;
+}
+
+.pcd-camera-frame .card > div[style*="position: relative"] {
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    flex: 1 1 auto !important;
+}
+
+.pcd-camera-foot {
+    flex: 0 0 28px;
+    min-height: 28px;
+    padding: 0 13px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #5d7467;
+    font: 7px "DM Mono", monospace;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.pcd-camera-foot span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pcd-camera-foot i {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px rgba(40, 229, 140, .42);
+}
+
+/* Control deck */
+.pcd-control-dock {
+    min-height: 69px;
+    height: 69px;
+    padding: 7px 9px;
+    display: grid;
+    grid-template-columns: 155px 235px 200px minmax(0, 1fr);
+    gap: 9px;
+    align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: linear-gradient(145deg, #08170e, #050f09);
+}
+
+.pcd-control-title strong,
+.pcd-control-title span {
+    display: block;
+}
+
+.pcd-control-title strong {
+    margin-top: 3px;
+    font-size: 11px;
+}
+
+.pcd-control-title .pcd-kicker {
+    font-size: 7px;
+}
+
+.pcd-field-label {
+    display: block;
+    margin-bottom: 3px;
+    color: #5e7568;
+    font: 700 7px "DM Mono", monospace;
+    letter-spacing: .15em;
+}
+
+.pcd-segment {
+    height: 30px;
+    display: flex;
+    border: 1px solid rgba(91, 177, 121, .14);
+    border-radius: 7px;
+    overflow: hidden;
+    background: #051009;
+}
+
+.pcd-segment button {
+    flex: 1;
+    border: 0;
+    padding: 0 5px;
+    background: transparent;
+    color: #668071;
+    font-size: 8px;
+    cursor: pointer;
+}
+
+.pcd-segment button.active {
+    color: #031008;
+    background: var(--green);
+}
+
+.pcd-segment button:disabled {
+    cursor: not-allowed;
+    opacity: .45;
+}
+
+.pcd-file-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 3px;
+    min-width: 0;
+    cursor: pointer;
+}
+
+.pcd-file-row input {
+    display: none;
+}
+
+.pcd-file-btn {
+    flex: 0 0 auto;
+    min-height: 20px;
+    padding: 0 7px;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(40, 229, 140, .18);
+    border-radius: 5px;
+    color: var(--green);
+    background: rgba(40, 229, 140, .03);
+    font: 600 7px "DM Mono", monospace;
+}
+
+.pcd-file-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #5b7164;
+    font: 7px "DM Mono", monospace;
+}
+
+.pcd-sound select {
+    width: 100%;
+    height: 30px;
+    padding: 0 8px;
+    border: 1px solid rgba(91, 177, 121, .14);
+    border-radius: 7px;
+    color: #dcebe1;
+    background: #051009;
+    outline: 0;
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.pcd-actions {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+    overflow: hidden;
+}
+
+.pcd-actions button {
+    flex: 0 1 auto;
+    min-width: 0;
+    min-height: 30px;
+    padding: 0 8px;
+    border-radius: 7px;
+    white-space: nowrap;
+    border: 1px solid rgba(91, 177, 121, .15);
+    background: #0a1910;
+    color: #c8d9ce;
+    font-size: 7px;
+    cursor: pointer;
+}
+
+.pcd-actions button.primary {
+    border-color: var(--green);
+    background: var(--green);
+    color: #031008;
+    font-weight: 800;
+}
+
+.pcd-actions button.ghost {
+    color: #82988b;
+    background: transparent;
+}
+
+.pcd-actions button.sound-active {
+    border-color: var(--green);
+    color: var(--green);
+    background: rgba(40, 229, 140, .08);
+}
+
+.pcd-actions button:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+}
+
+/* Panels */
+.pcd-panel,
+.pcd-activity {
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: linear-gradient(145deg, #07140c, #050d08);
+}
+
+.pcd-section-head {
+    min-height: 45px;
+    padding: 8px 11px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.pcd-section-head h2 {
+    margin: 3px 0 0;
+    font-size: 15px;
+    line-height: 1;
+    letter-spacing: -.035em;
+}
+
+.pcd-status-link {
+    padding-top: 3px;
+    color: var(--green);
+    font: 8px "DM Mono", monospace;
+}
+
+.pcd-count {
+    min-width: 27px;
+    height: 25px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(91, 177, 121, .13);
+    border-radius: 999px;
+    color: #7c9385;
+    font-size: 9px;
+}
+
+.pcd-recent-list {
+    height: calc(100% - 45px);
+    min-height: 0;
+    overflow: hidden;
+}
+
+.pcd-event {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 8px;
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(91, 177, 121, .08);
+}
+
+.pcd-event:last-child {
+    border-bottom: 0;
+}
+
+.pcd-event-thumb {
+    width: 48px;
+    height: 43px;
+    overflow: hidden;
+    border: 1px solid rgba(40, 229, 140, .15);
+    border-radius: 5px;
+    background: radial-gradient(circle, rgba(40, 229, 140, .10), transparent 65%), #09170e;
+    display: grid;
+    place-items: center;
+    color: var(--green);
+    font: 700 16px "DM Mono", monospace;
+}
+
+.pcd-event-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.pcd-event-copy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.pcd-event-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+.pcd-event-top strong {
+    font-size: 11px;
+}
+
+.pcd-event-state {
+    flex: 0 0 auto;
+    padding: 3px 4px;
+    border-radius: 4px;
+    border: 1px solid rgba(40, 229, 140, .15);
+    color: var(--green);
+    background: rgba(40, 229, 140, .035);
+    font: 700 5px "DM Mono", monospace;
+    letter-spacing: .06em;
+}
+
+.pcd-event-meta {
+    margin-top: 3px;
+    color: #718579;
+    font-size: 8px;
+}
+
+.pcd-event-copy time {
+    margin-top: 2px;
+    color: #53685b;
+    font: 7px "DM Mono", monospace;
+}
+
+.pcd-right-empty,
+.pcd-empty {
+    height: 100%;
+    min-height: 0;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pcd-right-empty > span,
+.pcd-empty-icon {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(40, 229, 140, .15);
+    border-radius: 8px;
+    color: var(--green);
+}
+
+.pcd-right-empty strong,
+.pcd-right-empty small,
+.pcd-empty strong,
+.pcd-empty span {
+    display: block;
+}
+
+.pcd-right-empty strong,
+.pcd-empty strong {
+    font-size: 11px;
+}
+
+.pcd-right-empty small,
+.pcd-empty span {
+    margin-top: 3px;
+    color: #5e7467;
+    font-size: 8px;
+}
+
+/* System */
+.pcd-status-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.pcd-online {
+    padding: 4px 6px;
+    border: 1px solid rgba(40, 229, 140, .15);
+    border-radius: 999px;
+    color: var(--green);
+    background: rgba(40, 229, 140, .03);
+    font: 700 6px "DM Mono", monospace;
+    letter-spacing: .06em;
+}
+
+.pcd-online i {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-right: 4px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 7px rgba(40, 229, 140, .4);
+}
+
+.pcd-metric-grid {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.pcd-metric {
+    min-height: 0;
+    padding: 9px 10px;
+    border-bottom: 1px solid rgba(91, 177, 121, .08);
+    border-right: 1px solid rgba(91, 177, 121, .08);
+}
+
+.pcd-metric:nth-child(2n) {
+    border-right: 0;
+}
+
+.pcd-metric:nth-child(n+5) {
+    border-bottom: 0;
+}
+
+.pcd-metric span,
+.pcd-metric strong,
+.pcd-metric small {
+    display: block;
+}
+
+.pcd-metric span {
+    color: #5b7265;
+    font: 7px "DM Mono", monospace;
+    letter-spacing: .10em;
+}
+
+.pcd-metric strong {
+    margin-top: 5px;
+    color: #edf7ef;
+    font: 700 16px "DM Mono", monospace;
+    line-height: 1;
+}
+
+.pcd-metric small {
+    margin-top: 3px;
+    color: #50665a;
+    font-size: 6px;
+}
+
+.pcd-engine {
+    flex: 0 0 49px;
+    padding: 7px 10px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.pcd-engine strong {
+    display: block;
+    margin-top: 3px;
+    color: var(--green);
+    font: 700 11px "DM Mono", monospace;
+}
+
+.pcd-engine .pcd-kicker {
+    font-size: 6px;
+}
+
+.pcd-engine-tech {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #61766a;
+    font: 6px "DM Mono", monospace;
+}
+
+/* Activity */
+.pcd-activity {
+    height: 78px;
+}
+
+.pcd-activity .pcd-section-head {
+    height: 38px;
+    min-height: 38px;
+}
+
+.pcd-activity .pcd-event-list {
+    height: 40px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(170px, 1fr);
+    overflow: hidden;
+}
+
+.pcd-activity .pcd-event {
+    height: 40px;
+    padding: 5px 7px;
+    border-right: 1px solid rgba(91, 177, 121, .08);
+    border-bottom: 0;
+    grid-template-columns: 33px minmax(0, 1fr);
+}
+
+.pcd-activity .pcd-event-thumb {
+    width: 33px;
+    height: 30px;
+    font-size: 12px;
+}
+
+.pcd-activity .pcd-event-top strong {
+    font-size: 8px;
+}
+
+.pcd-activity .pcd-event-state {
+    display: none;
+}
+
+.pcd-activity .pcd-event-meta,
+.pcd-activity .pcd-event-copy time {
+    font-size: 6px;
+}
+
+.pcd-activity .pcd-empty {
+    height: 40px;
+    padding: 4px 8px;
+}
+
+.pcd-activity .pcd-empty-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.pcd-activity .pcd-empty strong {
+    font-size: 8px;
+}
+
+.pcd-activity .pcd-empty span {
+    margin-top: 2px;
+    font-size: 6px;
+}
+
+/* Short desktop screens */
+@media (min-width: 1000px) and (max-height: 820px) {
+    .pcd-header,
+    .pcd-header-inner {
+        flex-basis: 62px;
+        height: 62px;
+        min-height: 62px;
+    }
+
+    .pcd-main {
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+    .pcd-titlebar {
+        flex-basis: 44px;
+        min-height: 44px;
+        margin-bottom: 5px;
+    }
+
+    .pcd-titlebar h1 {
+        font-size: 22px;
+    }
+
+    .pcd-left {
+        grid-template-rows: minmax(0, 1fr) 61px 64px;
+        gap: 6px;
+    }
+
+    .pcd-control-dock {
+        height: 61px;
+        min-height: 61px;
+        max-height: 61px;
+    }
+
+    .pcd-activity {
+        height: 64px;
+    }
+
+    .pcd-activity .pcd-section-head {
+        height: 32px;
+        min-height: 32px;
+    }
+
+    .pcd-activity .pcd-event-list,
+    .pcd-activity .pcd-empty {
+        height: 32px;
+    }
+
+    .pcd-camera-head {
+        flex-basis: 42px;
+        min-height: 42px;
+    }
+
+    .pcd-camera-foot {
+        flex-basis: 23px;
+        min-height: 23px;
+    }
+}
+
+/* Responsive */
+@media (max-width: 1050px) {
+    html:has(.pcd-app),
+    body:has(.pcd-app) {
+        overflow: auto;
+    }
+
+    #root:has(.pcd-app) {
+        height: auto;
+    }
+
+    .pcd-app {
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+    }
+
+    .pcd-header {
+        height: 62px;
+    }
+
+    .pcd-header-inner,
+    .pcd-main {
+        width: calc(100% - 24px);
+    }
+
+    .pcd-brand-context {
+        display: none;
+    }
+
+    .pcd-workspace {
+        display: block;
+    }
+
+    .pcd-left {
+        display: block;
+        height: auto;
+    }
+
+    .pcd-right {
+        display: block;
+        height: auto;
+        margin-top: 8px;
+    }
+
+    .pcd-camera,
+    .pcd-control-dock,
+    .pcd-activity,
+    .pcd-panel {
+        height: auto;
+        min-height: 0;
+        margin-bottom: 8px;
+    }
+
+    .pcd-camera-frame .videoEl {
+        height: auto !important;
+        aspect-ratio: 16 / 9 !important;
+    }
+
+    .pcd-control-dock {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .pcd-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .pcd-activity .pcd-event-list {
+        display: grid;
+        grid-auto-flow: row;
+        grid-auto-columns: auto;
+        height: auto;
+    }
+
+    .pcd-activity .pcd-event {
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid rgba(91, 177, 121, .08);
+    }
+}
+
+@media (max-width: 600px) {
+    .pcd-titlebar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .pcd-live-meta {
+        flex-wrap: wrap;
+    }
+
+    .pcd-control-dock {
+        grid-template-columns: 1fr;
+    }
+
+    .pcd-actions {
+        grid-column: auto;
+    }
+
+    .pcd-header-status {
+        min-height: 34px;
+        padding-inline: 10px;
+    }
+
+    .pcd-brand img {
+        width: 150px;
+    }
+
+    .pcd-metric-grid {
+        min-height: 230px;
+    }
+}
