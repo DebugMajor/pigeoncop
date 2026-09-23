@@ -84,6 +84,35 @@ function Camera({
     }
 
     useEffect(() => {
+        return () => {
+            startRequestRef.current += 1;
+
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
+
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach((track) => track.stop());
+                streamRef.current = null;
+            }
+
+            if (videoRef.current) {
+                videoRef.current.pause();
+                videoRef.current.srcObject = null;
+                videoRef.current.removeAttribute("src");
+            }
+
+            if (testVideoUrlRef.current) {
+                URL.revokeObjectURL(testVideoUrlRef.current);
+                testVideoUrlRef.current = null;
+            }
+
+            stopDeterrentSound();
+        };
+    }, []);
+
+    useEffect(() => {
         if (status === "loading") startCamera();
         else if (status === "active" && intervalRef.current == null) intervalRef.current = setInterval(captureFrame, 500);
         else if (status === "stopping") stopCamera();
