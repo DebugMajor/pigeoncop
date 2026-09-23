@@ -13,6 +13,7 @@ function AIModel({
     onDetectionsChange,
     resetTrigger,
     onBirdPresence,
+    onPerformance,
 }) {
     const [pigeonModel, setPigeonModel] = useState(null);
     const [faceModel, setFaceModel] = useState(null);
@@ -35,12 +36,17 @@ function AIModel({
         useRef(onDetectionsChange);
     const onBirdPresenceRef =
         useRef(onBirdPresence);
+    const onPerformanceRef =
+        useRef(onPerformance);
+    const lastDetectStartRef = useRef(null);
 
     onDetectionRef.current = onDetection;
     onDetectionsChangeRef.current =
         onDetectionsChange;
     onBirdPresenceRef.current =
         onBirdPresence;
+    onPerformanceRef.current =
+        onPerformance;
 
     // RESET AI STATE
     useEffect(() => {
@@ -273,6 +279,10 @@ function AIModel({
                 return;
             }
 
+            const inferenceStartTime = performance.now();
+            const previousDetectStart = lastDetectStartRef.current;
+            lastDetectStartRef.current = inferenceStartTime;
+
             try {
                 isProcessing.current =
                     true;
@@ -477,6 +487,24 @@ function AIModel({
                     err
                 );
             } finally {
+                const inferenceMs =
+                    performance.now() -
+                    inferenceStartTime;
+
+                const effectiveFps =
+                    previousDetectStart
+                        ? 1000 /
+                          (inferenceStartTime -
+                              previousDetectStart)
+                        : null;
+
+                onPerformanceRef.current?.({
+                    inferenceMs,
+                    ...(effectiveFps
+                        ? { effectiveFps }
+                        : {}),
+                });
+
                 isProcessing.current =
                     false;
             }
