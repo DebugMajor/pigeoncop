@@ -22,6 +22,7 @@ function Camera({
     const deterrentSoundRef = useRef(null);
     const deterrentCooldownUntilRef = useRef(0);
     const testVideoUrlRef = useRef(null);
+    const startRequestRef = useRef(0);
 
     useEffect(() => {
         if (!deterrentSoundPath) return;
@@ -38,6 +39,8 @@ function Camera({
     }, [deterrentSoundPath]);
 
     async function startCamera() {
+        const requestId = ++startRequestRef.current;
+
         try {
             if (sourceMode === "test") {
                 if (videoRef.current) {
@@ -51,6 +54,11 @@ function Camera({
                         ? URL.createObjectURL(testVideoFile)
                         : "/videos/pigeon-test.mp4";
 
+                    if (requestId !== startRequestRef.current) {
+                        if (testVideoFile) URL.revokeObjectURL(videoSource);
+                        return;
+                    }
+
                     videoRef.current.src = videoSource;
 
                     testVideoUrlRef.current = testVideoFile
@@ -63,6 +71,12 @@ function Camera({
                 setStatus("active"); return;
             }
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+            if (requestId !== startRequestRef.current) {
+                stream.getTracks().forEach((track) => track.stop());
+                return;
+            }
+
             streamRef.current = stream;
             if (videoRef.current) { videoRef.current.srcObject = stream; videoRef.current.removeAttribute("src"); await videoRef.current.play(); }
             setStatus("active");
@@ -91,6 +105,7 @@ function Camera({
     }, [resetTrigger, sourceMode]);
 
     function stopCamera() {
+        startRequestRef.current += 1;
         stopDeterrentSound();
         if (streamRef.current) {
             streamRef.current.getTracks().forEach((track) => track.stop());
