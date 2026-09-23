@@ -383,7 +383,12 @@ function App() {
                                             accept="video/*"
                                             disabled={status === "active" || status === "loading"}
                                             onChange={(event) => {
-                                                setTestVideoFile(event.target.files?.[0] || null);
+                                                const file = event.target.files?.[0] || null;
+                                                if (file && !file.type.startsWith("video/")) {
+                                                    window.alert("Please choose a valid video file.");
+                                                    return;
+                                                }
+                                                setTestVideoFile(file);
                                                 event.target.value = "";
                                             }}
                                         />
