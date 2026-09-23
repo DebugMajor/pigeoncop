@@ -66,6 +66,7 @@ function AIModel({
     // LOAD PIGEON MODEL + FACE MODEL
     useEffect(() => {
         let cancelled = false;
+        let activeFaceModel = null;
 
         async function loadModels() {
             try {
@@ -113,6 +114,8 @@ function AIModel({
                     return;
                 }
 
+                activeFaceModel = loadedFaceModel;
+
                 setPigeonModel(
                     loadedPigeonModel
                 );
@@ -141,6 +144,7 @@ function AIModel({
 
         return () => {
             cancelled = true;
+            activeFaceModel?.close();
         };
     }, []);
 
@@ -172,7 +176,14 @@ function AIModel({
                 true;
 
             const birdEvent = {
+                eventType: "pigeon_confirmed",
                 type: "bird",
+                status: "confirmed",
+                reason: "temporal_confirmation",
+                temporalConfirmation: {
+                    required: 3,
+                    observed: 3,
+                },
                 id: crypto.randomUUID(),
                 timestamp: Date.now(),
                 confidence: box.conf,
@@ -225,7 +236,14 @@ function AIModel({
                 true;
 
             const humanEvent = {
+                eventType: "human_confirmed",
                 type: "human",
+                status: "confirmed",
+                reason: "temporal_face_confirmation",
+                temporalConfirmation: {
+                    required: 2,
+                    observed: 2,
+                },
                 id: crypto.randomUUID(),
                 timestamp: Date.now(),
                 confidence:
