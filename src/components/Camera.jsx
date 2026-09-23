@@ -14,6 +14,7 @@ function Camera({
     playbackAction,
     deterrentSoundPath,
     testVideoFile,
+    onPerformance,
 }) {
     const videoRef = useRef(null), streamRef = useRef(null), canvasRef = useRef(null), intervalRef = useRef(null), prevFrameRef = useRef(null);
     const lastDetectionTimeRef = useRef(null), consecutiveMotionFrames = useRef(0), armed = useRef(true), consecutiveNoMotionFrames = useRef(0);
@@ -132,7 +133,7 @@ function Camera({
         const video = videoRef.current, canvas = canvasRef.current;
         if (!video || !canvas || !video.videoWidth || !video.videoHeight) return null;
         canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-        const context = canvas.getContext("2d"); if (!context) return null;
+        const context = canvas.getContext("2d", { willReadFrequently: true }); if (!context) return null;
         context.drawImage(video, 0, 0, canvas.width, canvas.height); return canvas.toDataURL("image/jpeg", 0.85);
     }
 
@@ -157,6 +158,7 @@ function Camera({
     }
 
     function captureFrame() {
+        const motionStartTime = performance.now();
         const canvas = canvasRef.current, video = videoRef.current;
         if (!canvas || !video || !video.videoWidth || !video.videoHeight) return;
         const context = canvas.getContext("2d"); if (!context) return;
@@ -166,6 +168,13 @@ function Camera({
         const prev = prevFrameRef.current.data, curr = currentFrame.data; let changedPixels = 0;
         for (let i = 0; i < curr.length; i += 4) { if (Math.abs(curr[i] - prev[i]) + Math.abs(curr[i + 1] - prev[i + 1]) + Math.abs(curr[i + 2] - prev[i + 2]) > 30) changedPixels++; }
         const motionPercentage = (changedPixels / (curr.length / 4)) * 100; prevFrameRef.current = currentFrame;
+
+        motionSampleRef.current += 1;
+        if (motionSampleRef.current % 5 === 0) {
+            onPerformance?.({
+                motionMs: performance.now() - motionStartTime,
+            });
+        }
         if (motionPercentage > 10) {
             setMotionDetected(true); consecutiveMotionFrames.current += 1; consecutiveNoMotionFrames.current = 0;
             const now = Date.now();
@@ -194,7 +203,7 @@ function Camera({
                 <video onLoadedMetadata={() => setVideoReady(true)} ref={videoRef} autoPlay playsInline muted={sourceMode === "test"} className="d-block mx-auto videoEl" style={{ width: "100%", maxWidth: "900px", maxHeight: "55vh", aspectRatio: "16 / 9", objectFit: "cover", display: status === "active" ? "block" : "none" }} />
                 {renderBoundingBoxes()}
             </div>
-            <AIModel videoRef={videoRef} videoReady={videoReady} motionDetected={motionDetected} onDetection={handleConfirmedDetection} onDetectionsChange={setDetections} resetTrigger={resetTrigger} onBirdPresence={handleBirdPresence} />
+            <AIModel videoRef={videoRef} videoReady={videoReady} motionDetected={motionDetected} onPerformance={onPerformance} onDetection={handleConfirmedDetection} onDetectionsChange={setDetections} resetTrigger={resetTrigger} onBirdPresence={handleBirdPresence} />
             <canvas ref={canvasRef} style={{ display: "none" }} />
         </div>
     </div>;
